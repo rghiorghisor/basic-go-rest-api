@@ -1,0 +1,14 @@
+server:  
+  http:
+    # The port on which the HTTP server listens.
+    port: 8081
+    # Read timeout (in seconds).
+    read-timeout: 10
+    # Write timeout (in seconds).
+    write-timeout: 10
+
+storage:
+  mongo:
+    uri: "mongodb://localhost:27017"
+    name: "testdb"
+    properties-collection: "properties_collection"

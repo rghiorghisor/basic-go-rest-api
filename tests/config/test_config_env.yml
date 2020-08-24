@@ -1,0 +1,13 @@
+server:  
+  http:
+    port: "$SERVER_PORT"
+    # Read timeout (in seconds).
+    read-timeout: "$SERVER_READ_TIMEOUT"
+    # Write timeout (in seconds).
+    write-timeout: "$SERVER_WRITE_TIMEOUT"
+
+storage:
+  mongo:
+    uri: "$MONGO_DB_URI"
+    name: "$MONGO_DB_NAME"
+    properties-collection: "$MONGO_DB_PROPERTIES_COLLECTION"
