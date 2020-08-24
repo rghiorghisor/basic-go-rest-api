@@ -1,5 +1,7 @@
 # Basic Go REST Api
 
+[![Go Report](https://goreportcard.com/report/github.com/rghiorghisor/basic-go-rest-api)](https://goreportcard.com/report/github.com/rghiorghisor/basic-go-rest-api)
+
 This application (boilerplate) is a take on developing a simple Go REST API, backed up by a MongoDb database, using principles of Hexagonal Architecture and SOLID principles.
 
 **Note** that this is not work done, in any way. For an application to be production ready additional features must be implemented. Some will be added to this repository in the future, other will probably remain the developer's future duties.
