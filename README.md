@@ -1,6 +1,6 @@
-# Basic GO REST Api
+# Basic Go REST Api
 
-This application (boilerplate) is a take on developing a simple GO REST API, backed up by a MongoDb database, using principles of Hexagonal Architecture and SOLID principles.
+This application (boilerplate) is a take on developing a simple Go REST API, backed up by a MongoDb database, using principles of Hexagonal Architecture and SOLID principles.
 
 **Note** that this is not work done, in any way. For an application to be production ready additional features must be implemented. Some will be added to this repository in the future, other will probably remain the developer's future duties.
 
@@ -99,7 +99,7 @@ By enabling automatic ENV handling (`viper.AutomaticEnv()`), the name of the use
 
 **Local approach**
 Even if the above depicted approach works as expected and it can be customized according to different needs (e.g. adding name prefixes, binding properties or key transformation modules), the exact location from which a property is loaded is not very transparent. Still, for smaller environments and configuration files this might not prove itself to be an issue. But for more complex configuration it can become very difficult to determine which of the properties are loaded from the environment and which from the files.
-To address this possible maintainability issue, **Basic GO REST Api** needs the desired ENV variables keys to be specified as the property string value, as it follows:
+To address this possible maintainability issue, **Basic Go REST Api** needs the desired ENV variables keys to be specified as the property string value, as it follows:
 ```
 server:  
   http:
