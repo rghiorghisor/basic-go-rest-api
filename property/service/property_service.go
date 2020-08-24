@@ -40,8 +40,10 @@ func (service PropertyService) ReadAll(ctx context.Context) ([]*model.Property, 
 	return service.repository.ReadAll(ctx)
 }
 
-func (service PropertyService) FindById(ctx context.Context, id string) (*model.Property, error) {
-	foundProp, err := service.repository.FindById(ctx, id)
+// FindByID retrieves the property matching the given id if such a property
+// exists; otherwise will return a not found error.
+func (service PropertyService) FindByID(ctx context.Context, id string) (*model.Property, error) {
+	foundProp, err := service.repository.FindByID(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -54,11 +56,12 @@ func (service PropertyService) FindById(ctx context.Context, id string) (*model.
 	return foundProp, nil
 }
 
-// ReadAll retrieves all available properties.
+// Delete the property with the given id.
 func (service PropertyService) Delete(ctx context.Context, id string) error {
 	return service.repository.Delete(ctx, id)
 }
 
+// Update all fields of the given property.
 func (service PropertyService) Update(ctx context.Context, property *model.Property) error {
 	return service.repository.Update(ctx, property)
 }

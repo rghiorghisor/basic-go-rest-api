@@ -70,7 +70,7 @@ func TestReadAll(t *testing.T) {
 	assert.Equal(t, properties, actual)
 }
 
-func TestFindById(t *testing.T) {
+func TestFindByID(t *testing.T) {
 	srv, repo := setup()
 
 	found := &model.Property{
@@ -78,37 +78,37 @@ func TestFindById(t *testing.T) {
 		Name:  "TestName",
 		Value: "TestValue"}
 
-	repo.On("FindById", found.ID).Return(found, nil)
+	repo.On("FindByID", found.ID).Return(found, nil)
 
 	ctx := context.Background()
-	actual, err := srv.FindById(ctx, found.ID)
+	actual, err := srv.FindByID(ctx, found.ID)
 
 	assert.Nil(t, err)
 	assert.Equal(t, found, actual)
 }
 
-func TestFindByIdNotFound(t *testing.T) {
+func TestFindByIDNotFound(t *testing.T) {
 	srv, repo := setup()
 
 	notFoundID := "testid"
-	repo.On("FindById", notFoundID).Return(nil, nil)
+	repo.On("FindByID", notFoundID).Return(nil, nil)
 
 	ctx := context.Background()
-	actual, err := srv.FindById(ctx, notFoundID)
+	actual, err := srv.FindByID(ctx, notFoundID)
 
 	assert.Nil(t, actual)
 	assert.Equal(t, apperrors.NewEntityNotFound(reflect.TypeOf(actual), "testid"), err)
 }
 
-func TestFindByIdUnexpected(t *testing.T) {
+func TestFindByIDUnexpected(t *testing.T) {
 	srv, repo := setup()
 
 	notFoundID := "TestId"
 	expectedError := errors.New("unexpected")
-	repo.On("FindById", notFoundID).Return(nil, expectedError)
+	repo.On("FindByID", notFoundID).Return(nil, expectedError)
 
 	ctx := context.Background()
-	actual, err := srv.FindById(ctx, notFoundID)
+	actual, err := srv.FindByID(ctx, notFoundID)
 
 	assert.Nil(t, actual)
 	assert.Equal(t, expectedError, err)
@@ -166,7 +166,7 @@ func (m PropertyRepositoryMock) ReadAll(ctx context.Context) ([]*model.Property,
 	return args.Get(0).([]*model.Property), args.Error(1)
 }
 
-func (m PropertyRepositoryMock) FindById(context context.Context, id string) (*model.Property, error) {
+func (m PropertyRepositoryMock) FindByID(context context.Context, id string) (*model.Property, error) {
 	args := m.Called(id)
 
 	if args.Get(0) == nil {

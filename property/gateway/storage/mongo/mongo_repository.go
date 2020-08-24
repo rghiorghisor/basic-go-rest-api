@@ -12,23 +12,27 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type PropertyDto struct {
+type propertyDto struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Name        string             `bson:"name"`
 	Description string             `bson:"description"`
 	Value       string             `bson:"value"`
 }
 
+// MongoPropertyRepository is a representation of the property repository for
+// a mongo DBs.
 type MongoPropertyRepository struct {
 	dbCollection *mongo.Collection
 }
 
+// NewMongoPropertyRepository retrieves a new repository object ready to be used.
 func NewMongoPropertyRepository(db *mongo.Database, collectionName string) storage.Repository {
 	return &MongoPropertyRepository{
 		dbCollection: db.Collection(collectionName),
 	}
 }
 
+// Create a new entry based on the provided property.
 func (repository MongoPropertyRepository) Create(ctx context.Context, property *model.Property) error {
 	dto := convertToDto(property)
 
@@ -47,6 +51,7 @@ func (repository MongoPropertyRepository) Create(ctx context.Context, property *
 	return nil
 }
 
+// ReadAll retrieves all available properties.
 func (repository MongoPropertyRepository) ReadAll(ctx context.Context) ([]*model.Property, error) {
 	cursor, error := repository.dbCollection.Find(ctx, bson.M{})
 	defer cursor.Close(ctx)
@@ -55,10 +60,10 @@ func (repository MongoPropertyRepository) ReadAll(ctx context.Context) ([]*model
 		return nil, error
 	}
 
-	result := make([]*PropertyDto, 0)
+	result := make([]*propertyDto, 0)
 
 	for cursor.Next(ctx) {
-		dto := new(PropertyDto)
+		dto := new(propertyDto)
 		err := cursor.Decode(dto)
 		if err != nil {
 			return nil, err
@@ -70,10 +75,12 @@ func (repository MongoPropertyRepository) ReadAll(ctx context.Context) ([]*model
 	return convertDtosToModel(result), nil
 }
 
-func (repository MongoPropertyRepository) FindById(context context.Context, id string) (*model.Property, error) {
+// FindByID retrieves the property matching the given id if such a property
+// exists; otherwise will return a not found error.
+func (repository MongoPropertyRepository) FindByID(context context.Context, id string) (*model.Property, error) {
 	objID, _ := primitive.ObjectIDFromHex(id)
 
-	result := new(PropertyDto)
+	result := new(propertyDto)
 	err := repository.dbCollection.FindOne(context, bson.M{
 		"_id": objID,
 	}).Decode(result)
@@ -93,6 +100,8 @@ func (repository MongoPropertyRepository) FindById(context context.Context, id s
 	return convertToModel(result), nil
 }
 
+// FindByName retrieves the property matching the given name if such a property
+// exists; otherwise will return a not found error.
 func (repository MongoPropertyRepository) FindByName(context context.Context, name string) (*model.Property, error) {
 	query := make(map[string]string)
 	query["name"] = name
@@ -115,10 +124,10 @@ func (repository MongoPropertyRepository) findAllBy(ctx context.Context, queryVa
 		return nil, err
 	}
 
-	result := make([]*PropertyDto, 0)
+	result := make([]*propertyDto, 0)
 
 	for cursor.Next(ctx) {
-		dto := new(PropertyDto)
+		dto := new(propertyDto)
 		err := cursor.Decode(dto)
 		if err != nil {
 			return nil, err
@@ -131,7 +140,7 @@ func (repository MongoPropertyRepository) findAllBy(ctx context.Context, queryVa
 }
 
 func (repository MongoPropertyRepository) findOneBy(context context.Context, queryValues *map[string]string) (*model.Property, error) {
-	result := new(PropertyDto)
+	result := new(propertyDto)
 	filter := bson.M{}
 
 	for k, v := range *queryValues {
@@ -151,6 +160,7 @@ func (repository MongoPropertyRepository) findOneBy(context context.Context, que
 	return convertToModel(result), nil
 }
 
+// Delete the property with the given id.
 func (repository MongoPropertyRepository) Delete(context context.Context, id string) error {
 	objID, _ := primitive.ObjectIDFromHex(id)
 
@@ -160,6 +170,7 @@ func (repository MongoPropertyRepository) Delete(context context.Context, id str
 	return err
 }
 
+// Update all fields of the given property.
 func (repository MongoPropertyRepository) Update(ctx context.Context, property *model.Property) error {
 	objID, _ := primitive.ObjectIDFromHex(property.ID)
 
@@ -174,15 +185,15 @@ func (repository MongoPropertyRepository) Update(ctx context.Context, property *
 	return err
 }
 
-func convertToDto(property *model.Property) *PropertyDto {
-	return &PropertyDto{
+func convertToDto(property *model.Property) *propertyDto {
+	return &propertyDto{
 		Name:        property.Name,
 		Description: property.Description,
 		Value:       property.Value,
 	}
 }
 
-func convertDtosToModel(dtos []*PropertyDto) []*model.Property {
+func convertDtosToModel(dtos []*propertyDto) []*model.Property {
 	result := make([]*model.Property, len(dtos))
 
 	for index, dto := range dtos {
@@ -192,7 +203,7 @@ func convertDtosToModel(dtos []*PropertyDto) []*model.Property {
 	return result
 }
 
-func convertToModel(dto *PropertyDto) *model.Property {
+func convertToModel(dto *propertyDto) *model.Property {
 	return &model.Property{
 		ID:          dto.ID.Hex(),
 		Name:        dto.Name,

@@ -70,7 +70,7 @@ type readAllResponseDto struct {
 func (ctrl *Controller) Read(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	foundProp, err := ctrl.service.FindById(ctx.Request.Context(), id)
+	foundProp, err := ctrl.service.FindByID(ctx.Request.Context(), id)
 
 	if err != nil {
 		ctx.Error(err)

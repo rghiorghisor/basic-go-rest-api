@@ -171,7 +171,7 @@ func TestRead(t *testing.T) {
 		Value:       "Value test",
 	}
 
-	service.On("FindById", "TestId").Return(property, nil)
+	service.On("FindByID", "TestId").Return(property, nil)
 
 	// Perform action.
 	w := perform("GET", "/api/property/TestId", nil, router)
@@ -184,7 +184,7 @@ func TestReadNotFound(t *testing.T) {
 	router, service := setup()
 
 	// Mock service return.
-	service.On("FindById", "TestId").Return(&model.Property{}, apperrors.NewEntityNotFound(reflect.TypeOf(&model.Property{}), "TestId"))
+	service.On("FindByID", "TestId").Return(&model.Property{}, apperrors.NewEntityNotFound(reflect.TypeOf(&model.Property{}), "TestId"))
 
 	// Perform action.
 	w := perform("GET", "/api/property/TestId", nil, router)
@@ -197,7 +197,7 @@ func TestReadUnexpected(t *testing.T) {
 	router, service := setup()
 
 	// Mock service error.
-	service.On("FindById", "TestId").Return(&model.Property{}, errors.New("unexpected"))
+	service.On("FindByID", "TestId").Return(&model.Property{}, errors.New("unexpected"))
 
 	// Perform action.
 	w := perform("GET", "/api/property/TestId", nil, router)
@@ -362,7 +362,7 @@ func (m PropertyServiceMock) ReadAll(ctx context.Context) ([]*model.Property, er
 	return args.Get(0).([]*model.Property), args.Error(1)
 }
 
-func (m PropertyServiceMock) FindById(ctx context.Context, id string) (*model.Property, error) {
+func (m PropertyServiceMock) FindByID(ctx context.Context, id string) (*model.Property, error) {
 	args := m.Called(id)
 
 	return args.Get(0).(*model.Property), args.Error(1)

@@ -12,7 +12,7 @@ type Service interface {
 
 	ReadAll(ctx context.Context) ([]*model.Property, error)
 
-	FindById(ctx context.Context, id string) (*model.Property, error)
+	FindByID(ctx context.Context, id string) (*model.Property, error)
 
 	Delete(ctx context.Context, id string) error
 

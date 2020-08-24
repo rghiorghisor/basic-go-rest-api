@@ -45,7 +45,7 @@ type StorageConfiguration struct {
 	DbConfiguration *MongoDbConfiguration `yaml:"mongo"`
 }
 
-// MongoDbConfiguration hols settings refering to MongoDb as storage option.
+// MongoDbConfiguration hols settings referring to MongoDb as storage option.
 type MongoDbConfiguration struct {
 	URI                      string `yaml:"uri"`
 	Name                     string `yaml:"name"`
