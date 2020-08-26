@@ -25,11 +25,12 @@ This application (boilerplate) is a take on developing a simple Go REST API, bac
 
 ### Implementation details
 Some of the implementation details one can analyze or take note from this application:
-- How to load configuration YAMLs using VIPER;
-- How to specify the ENV variable name in configuration files (loaded with Viper);
+- How to load configuration YAMLs using [Viper](https://github.com/spf13/viper);
+- How to specify the ENV variable name in configuration files (loaded with [Viper](https://github.com/spf13/viper));
 - How to organize a use case (feature) in 3 layers;
+- How to create a HTTP server using [gin-gonic/gin](https://github.com/gin-gonic/gin);
 - How to implement standard RESTful CRUD operations (RFC 7231);
-- How to use mongoDB GO driver ([mongodb/mongo-go-driver](https://github.com/mongodb/mongo-go-driver));
+- How to use mongoDB GO driver ([mongodb/mongo-go-driver](https://github.com/mongodb/mongo-go-driver)).
 
 ## Getting Started
 
