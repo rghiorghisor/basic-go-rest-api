@@ -17,6 +17,7 @@ const configType = "yaml"
 // AppConfiguration holds the current application configuration.
 type AppConfiguration struct {
 	Settings *ConfigurationSettings
+	Logger   *LoggerConfiguration  `yaml:"logger"`
 	Server   *ServerConfiguration  `yaml:"server"`
 	Storage  *StorageConfiguration `yaml:"storage"`
 }
@@ -26,6 +27,15 @@ type AppConfiguration struct {
 type ConfigurationSettings struct {
 	configPath string
 	configName string
+}
+
+// LoggerConfiguration contains all available configurable logging settings.
+type LoggerConfiguration struct {
+	Format        string `yaml:"format"`
+	Level         string `yaml:"level"`
+	LogsDir       string `yaml:"dir"`
+	AppLogName    string `yaml:"application-log-file-name"`
+	AppLogConsole bool   `yaml:"application-log-console"`
 }
 
 // ServerConfiguration holds any settings regarding the application's server.

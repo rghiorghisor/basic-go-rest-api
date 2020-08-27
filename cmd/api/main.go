@@ -2,15 +2,19 @@ package main
 
 import (
 	"github.com/rghiorghisor/basic-go-rest-api/config"
+	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	"github.com/rghiorghisor/basic-go-rest-api/server"
 	"github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
 
 func main() {
-
 	// Load and validate configuration.
 	appConfiguration := config.NewAppConfiguration()
 	appConfiguration.Load()
+
+	// Setup and start the logger.
+	logger.New(appConfiguration.Logger)
+	logger.AppLogger.Info("Starting application...")
 
 	// Configure and connect to storage.
 	storage := storage.NewStorage()

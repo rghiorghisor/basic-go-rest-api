@@ -27,6 +27,8 @@ This application (boilerplate) is a take on developing a simple Go REST API, bac
 Some of the implementation details one can analyze or take note from this application:
 - How to load configuration YAMLs using [Viper](https://github.com/spf13/viper);
 - How to specify the ENV variable name in configuration files (loaded with [Viper](https://github.com/spf13/viper));
+- How to setup a configurable logger using [Logrus](https://github.com/sirupsen/logrus);
+- How to setup [x-cray/logrus-prefixed-formatter](https://github.com/x-cray/logrus-prefixed-formatter);
 - How to organize a use case (feature) in 3 layers;
 - How to create a HTTP server using [gin-gonic/gin](https://github.com/gin-gonic/gin);
 - How to implement standard RESTful CRUD operations (RFC 7231);
@@ -57,6 +59,7 @@ go test ./...
 │   └── api                The server application API (the entry point);
 ├── config                 Configuration logic and configuration files;
 ├── errors                 Application errors and error logic;
+├── logger                 Application logger and logic;
 ├── model                  Model (entities) definitions and logic;
 ├── property               The entire property use case and dependencies;
 │   ├── gateway            The gateways implementations;
@@ -73,6 +76,22 @@ go test ./...
 
 ## Configuration
 The application configuration is achieved by the `./config/config.yml` file loaded using the [Viper](https://github.com/spf13/viper) module, with a few customizations.
+
+### Properties
+
+| Name | Description |
+| --- | --- |
+| `logger.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn", "warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
+| `logger.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default info` is considered.|
+| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. |
+| `logger.application-log-file-name` | The name of the main application log. |
+| `logger.application-log-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. |
+| `server.http.port` | The port that the server listens on. |
+| `server.http.read-timeout` | The server read timeout (in seconds). |
+| `server.http.write-timeout` | The server write timeout (in seconds). |
+| `storage.mongo.uri` | The mongoDB uri. |
+| `storage.mongo.name` | The database name. |
+| `storage.mongo.properties-collection` | The properties collection name. |
 
 ### Example
 ```
