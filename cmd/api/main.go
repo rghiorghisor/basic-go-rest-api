@@ -14,7 +14,7 @@ func main() {
 
 	// Setup and start the logger.
 	logger.New(appConfiguration.Logger)
-	logger.AppLogger.Info("Starting application...")
+	logger.Main.Info("Starting application...")
 
 	// Configure and connect to storage.
 	storage := storage.NewStorage()

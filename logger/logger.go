@@ -9,8 +9,8 @@ import (
 	logrus "github.com/sirupsen/logrus"
 )
 
-// AppLogger is the main application logger that should contain any important information.
-var AppLogger *Logger
+// Main is the main application logger that should contain any important information.
+var Main *Logger
 
 // Logger the struct containing all available loggers.
 type Logger struct {
@@ -65,9 +65,9 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 		return nil, err
 	}
 
-	AppLogger = NewLogger(lgrDefinition, fd)
+	Main = NewLogger(lgrDefinition, fd)
 
-	return AppLogger, nil
+	return Main, nil
 }
 
 // Info logs the given message, along with the default prefix, i.e. "main".
@@ -83,4 +83,11 @@ func (lgr *Logger) Infof(format string, args ...interface{}) {
 	lgr.Logger.WithFields(logrus.Fields{
 		"prefix": "main",
 	}).Infof(format, args...)
+}
+
+// Error logs the given message as an error, along with the default prefix, i.e. "main".
+func (lgr *Logger) Error(message string, err error) {
+	lgr.Logger.WithFields(logrus.Fields{
+		"prefix": "main",
+	}).WithError(err).Error(message)
 }

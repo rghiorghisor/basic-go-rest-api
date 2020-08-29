@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rghiorghisor/basic-go-rest-api/config"
+	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	phttp "github.com/rghiorghisor/basic-go-rest-api/property/gateway/http"
 	shttp "github.com/rghiorghisor/basic-go-rest-api/server/http"
 )
@@ -44,20 +45,27 @@ func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfigurati
 func (server *AppServer) Run() {
 
 	go func() {
+		logger.Main.Infof("Starting HTTP server, listening on '%v'", server.httpServer.Addr)
 		if err := server.httpServer.ListenAndServe(); err != nil {
 			log.Fatalf("Failed to start: %+v", err)
+		} else {
+
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, os.Interrupt)
-
 	<-quit
 
 	ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdown()
 
-	server.httpServer.Shutdown(ctx)
+	logger.Main.Info("Shuting down...")
+	if err := server.httpServer.Shutdown(ctx); err != nil {
+		logger.Main.Error("Failed to shutdown server", err)
+	}
+
+	logger.Main.Info("Server shutdown.")
 }
 
 func setupEndpoints(services *Services, router *gin.Engine) {
