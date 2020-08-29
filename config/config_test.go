@@ -46,7 +46,7 @@ func TestLoadDefaults(t *testing.T) {
 	assert.Equal(t, "info", appConfiguration.Logger.Level)
 	assert.Equal(t, "./logs", appConfiguration.Logger.LogsDir)
 	assert.Equal(t, "basic-go-rest-api", appConfiguration.Logger.AppLogName)
-	assert.Equal(t, true, appConfiguration.Logger.AppLogConsole)
+	assert.Equal(t, false, appConfiguration.Logger.AppLogConsole)
 }
 
 func setupAndLoad(name string) *AppConfiguration {
