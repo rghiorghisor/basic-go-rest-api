@@ -39,6 +39,16 @@ func TestLoadEnv(t *testing.T) {
 	assert.Equal(t, "properties_collection", appConfiguration.Storage.DbConfiguration.PropertiesCollectionName)
 }
 
+func TestLoadDefaults(t *testing.T) {
+	appConfiguration := setupAndLoad("test_config_simple")
+
+	assert.Equal(t, "text", appConfiguration.Logger.Format)
+	assert.Equal(t, "info", appConfiguration.Logger.Level)
+	assert.Equal(t, "./logs", appConfiguration.Logger.LogsDir)
+	assert.Equal(t, "basic-go-rest-api", appConfiguration.Logger.AppLogName)
+	assert.Equal(t, true, appConfiguration.Logger.AppLogConsole)
+}
+
 func setupAndLoad(name string) *AppConfiguration {
 	appConfiguration := NewAppConfiguration()
 	appConfiguration.Settings.configPath = "../tests/config"

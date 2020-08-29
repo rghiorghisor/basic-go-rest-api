@@ -1,8 +1,4 @@
-logger:
-  level: info
-  format: text
-  dir: "./logs"
-  application-log-file-name: "basic-go-rest-api"
+logger: 
   application-log-console: true
 
 server:

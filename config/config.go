@@ -64,9 +64,7 @@ type MongoDbConfiguration struct {
 
 // NewAppConfiguration creates a new application configuration instance.
 func NewAppConfiguration() *AppConfiguration {
-	return &AppConfiguration{
-		Settings: &ConfigurationSettings{"./config", "config"},
-	}
+	return NewDefault()
 }
 
 // Load the application configuration.

@@ -83,9 +83,9 @@ The application configuration is achieved by the `./config/config.yml` file load
 | --- | --- |
 | `logger.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn", "warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
 | `logger.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default info` is considered.|
-| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. |
-| `logger.application-log-file-name` | The name of the main application log. |
-| `logger.application-log-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. |
+| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `/logs`.|
+| `logger.application-log-file-name` | The name of the main application log. Default value is `basic-go-rest-api`.|
+| `logger.application-log-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. Default value is `false`. |
 | `server.http.port` | The port that the server listens on. |
 | `server.http.read-timeout` | The server read timeout (in seconds). |
 | `server.http.write-timeout` | The server write timeout (in seconds). |
