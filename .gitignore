@@ -1,2 +1,7 @@
 .vscode
+
+/.bin
 /logs
+
+cover.out
+cover-all.out
