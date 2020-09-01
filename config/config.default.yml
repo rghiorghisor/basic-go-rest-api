@@ -1,0 +1,64 @@
+##
+# This file contains all the possible configuration properties.
+#
+# Please note, that some of them have default values and some don't
+##
+
+# Defines how the application logging works.
+logger:
+  
+  # The logger message format. Accepted values are (case insensitive): text, json. 
+  # If none is present the default info is considered.
+  format: "text|json"
+
+  # The logger level. Accepted values are (case insensitive): panic, fatal, error, warn, warning, info, debug, trace. 
+  # If none is present the default info is considered.
+  level: "panic|fatal|error|warn|warning|info|debug|trace"
+
+  # The directory where all log files are placed. 
+  # If it does not exist its creation will be attempted. Default value is "./logs".
+  dir:
+
+  # The name of the main application log. 
+  # Default value is "basic-go-rest-api.log"
+  application-log-file-name:
+
+  # Boolean value that if true will also print the log messages to console; otherwise the messages can be found only in the log files. 
+  # Default value is "false".  
+  application-log-console: true
+
+# Defines how the server works.
+server:
+
+  # HTTP settings.
+  http:
+    
+    # The port that the server listens on.
+    # Default value is "8080".
+    port: 8081
+
+    # The server request read timeout (in seconds).
+    # Default is "10"
+    read-timeout: 
+
+    # The server response write timeout (in seconds).
+    # Default is "10"
+    write-timeout: 
+
+# Defines where the serve connect to as a storage.
+storage:
+
+  # Defines the mongoDB settings.
+  mongo:
+
+    # The mongoDB URI.
+    # No default value is provided.
+    uri: "mongodb://localhost:27017"
+
+    # The database name.
+    # No default value is provided.
+    name: "testdb"
+
+    # The properties collection name.
+    # No default value is provided.
+    properties-collection: "properties_collection"

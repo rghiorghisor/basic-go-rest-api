@@ -81,25 +81,26 @@ The application configuration is achieved by the `./config/config.yml` file load
 
 | Name | Description |
 | --- | --- |
-| `logger.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn", "warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
-| `logger.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default info` is considered.|
-| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `/logs`.|
+| `logger.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn`, `warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
+| `logger.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default `info` is considered.|
+| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `./logs`.|
 | `logger.application-log-file-name` | The name of the main application log. Default value is `basic-go-rest-api`.|
 | `logger.application-log-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. Default value is `false`. |
-| `server.http.port` | The port that the server listens on. |
-| `server.http.read-timeout` | The server read timeout (in seconds). |
-| `server.http.write-timeout` | The server write timeout (in seconds). |
-| `storage.mongo.uri` | The mongoDB uri. |
-| `storage.mongo.name` | The database name. |
-| `storage.mongo.properties-collection` | The properties collection name. |
+| `server.http.port` | The port that the server listens on. Default value is `8080`|
+| `server.http.read-timeout` | The server read timeout (in seconds). Default value is `10`.|
+| `server.http.write-timeout` | The server write timeout (in seconds). Default value is `10`.|
+| `storage.mongo.uri` | The mongoDB URI. *No default value is provided*. |
+| `storage.mongo.name` | The database name. *No default value is provided*. |
+| `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
 
 ### Example
 ```
-server:  
-  http:
+logger: 
+  application-log-console: true
+
+server:
+  http:    
     port: 8081    
-    read-timeout: 10    
-    write-timeout: 10
 
 storage:
   mongo:

@@ -28,7 +28,12 @@ func New(conf *config.LoggerConfiguration) *Logger {
 }
 
 // NewLogger creates a new logger based on the provided parameters.
-func NewLogger(lgrDefinition *Definition, w io.Writer) *Logger {
+func NewMainLogger(lgrDefinition *Definition, w io.Writer) *Logger {
+	return NewLogger(lgrDefinition, w, "main")
+}
+
+// NewLogger creates a new logger based on the provided parameters.
+func NewLogger(lgrDefinition *Definition, w io.Writer, prefix string) *Logger {
 	newLogger := logrus.New()
 
 	newLogger.Level = lgrDefinition.level
@@ -43,6 +48,7 @@ func NewLogger(lgrDefinition *Definition, w io.Writer) *Logger {
 
 	lgr := &Logger{
 		Logger: newLogger,
+		prefix: prefix,
 	}
 
 	return lgr
@@ -66,8 +72,7 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 		return nil, err
 	}
 
-	Main = NewLogger(lgrDefinition, fd)
-	Main.prefix = "main"
+	Main = NewMainLogger(lgrDefinition, fd)
 
 	return Main, nil
 }

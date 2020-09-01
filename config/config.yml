@@ -2,13 +2,8 @@ logger:
   application-log-console: true
 
 server:
-  http:
-    # The port on which the HTTP server listens.
-    port: 8081
-    # Read timeout (in seconds).
-    read-timeout: 10
-    # Write timeout (in seconds).
-    write-timeout: 10
+  http:    
+    port: 8081    
 
 storage:
   mongo:

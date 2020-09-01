@@ -18,7 +18,7 @@ func TestInfo(t *testing.T) {
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
+	lgr := NewMainLogger(definition, buf)
 
 	lgr.Info("test message")
 
@@ -36,7 +36,7 @@ func TestInfof(t *testing.T) {
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
+	lgr := NewMainLogger(definition, buf)
 
 	lgr.Infof("test message no %d", 1)
 
@@ -54,7 +54,7 @@ func TestInfo1(t *testing.T) {
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
+	lgr := NewMainLogger(definition, buf)
 
 	lgr.Info("test message")
 
