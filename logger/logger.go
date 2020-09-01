@@ -15,6 +15,7 @@ var Main *Logger
 // Logger the struct containing all available loggers.
 type Logger struct {
 	Logger *logrus.Logger
+	prefix string
 }
 
 // New generated a new logger ready to be used.
@@ -66,28 +67,29 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 	}
 
 	Main = NewLogger(lgrDefinition, fd)
+	Main.prefix = "main"
 
 	return Main, nil
 }
 
-// Info logs the given message, along with the default prefix, i.e. "main".
+// Info logs the given message, along with the prefix field.
 func (lgr *Logger) Info(message string) {
 	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": "main",
+		"prefix": lgr.prefix,
 	}).Info(message)
 }
 
 // Infof formats the give string along with the parameters and logs it, along
-// with the along with the default prefix, i.e. "main".
+// with the along with the prefix field.
 func (lgr *Logger) Infof(format string, args ...interface{}) {
 	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": "main",
+		"prefix": lgr.prefix,
 	}).Infof(format, args...)
 }
 
-// Error logs the given message as an error, along with the default prefix, i.e. "main".
+// Error logs the given message as an error, along with the prefix field.
 func (lgr *Logger) Error(message string, err error) {
 	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": "main",
+		"prefix": lgr.prefix,
 	}).WithError(err).Error(message)
 }

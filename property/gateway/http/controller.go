@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -52,7 +51,7 @@ func (ctrl *Controller) Create(ctx *gin.Context) {
 
 	// Call service (business logic).
 	err := ctrl.service.Create(ctx.Request.Context(), prop)
-	fmt.Println(err)
+
 	// Respond with either error either success.
 	if err != nil {
 		ctx.Error(err)
