@@ -13,8 +13,7 @@ func main() {
 	appConfiguration.Load()
 
 	// Setup and start the logger.
-	logger.New(appConfiguration.Logger)
-	logger.Main.Info("Starting application...")
+	startLogger(appConfiguration)
 
 	// Configure and connect to storage.
 	storage := storage.NewStorage()
@@ -28,4 +27,11 @@ func main() {
 	appServer := server.NewAppServer()
 	appServer.Setup(appConfiguration.Server.HTTPServer, services)
 	appServer.Run()
+}
+
+func startLogger(appConfiguration *config.AppConfiguration) {
+	logger.New(appConfiguration.Logger)
+
+	logger.Main.Infof("Loaded configuration.")
+	logger.Main.Infof("Starting application in %s mode...", appConfiguration.Environment.Name)
 }

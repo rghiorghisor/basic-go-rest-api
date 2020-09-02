@@ -4,15 +4,19 @@
 # Please note, that some of them have default values and some don't
 ##
 
+# The environment associated with this configurations. Accepted values are (case insensitive): dev, development, prod, production.
+# Default value is "development"
+environment: "dev|development|prod|production"
+
 # Defines how the application logging works.
 logger:
   
   # The logger message format. Accepted values are (case insensitive): text, json. 
-  # If none is present the default info is considered.
+  # If none is present the default "text" is considered.
   format: "text|json"
 
   # The logger level. Accepted values are (case insensitive): panic, fatal, error, warn, warning, info, debug, trace. 
-  # If none is present the default info is considered.
+  # If none is present the default "info" is considered.
   level: "panic|fatal|error|warn|warning|info|debug|trace"
 
   # The directory where all log files are placed. 

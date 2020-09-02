@@ -11,7 +11,10 @@ func NewDefault() *AppConfiguration {
 }
 
 func newDefaultSettings() *ConfigurationSettings {
-	return &ConfigurationSettings{"./config", "config"}
+	return &ConfigurationSettings{
+		configPath: "./config",
+		configName: "config",
+	}
 }
 
 func newDefaultLoggerConfiguration() *LoggerConfiguration {

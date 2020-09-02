@@ -1,3 +1,5 @@
+environment: "dev"
+
 logger: 
   application-log-console: true
 

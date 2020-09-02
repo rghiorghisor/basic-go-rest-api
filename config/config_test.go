@@ -49,12 +49,41 @@ func TestLoadDefaults(t *testing.T) {
 	assert.Equal(t, false, appConfiguration.Logger.AppLogConsole)
 }
 
+func TestLoadEnvironment(t *testing.T) {
+	appConfiguration := setupAndLoad("test_config_simple")
+	assert.Equal(t, true, appConfiguration.IsDevelopment())
+	assert.Equal(t, false, appConfiguration.IsProduction())
+
+	appConfiguration = setupAndLoadWithEnv("test_config_simple", "production")
+	assert.Equal(t, false, appConfiguration.IsDevelopment())
+	assert.Equal(t, true, appConfiguration.IsProduction())
+
+	appConfiguration = setupAndLoadWithEnv("test_config_simple", "prod")
+	assert.Equal(t, false, appConfiguration.IsDevelopment())
+	assert.Equal(t, true, appConfiguration.IsProduction())
+
+	appConfiguration = setupAndLoadWithEnv("test_config_simple", "dev")
+	assert.Equal(t, true, appConfiguration.IsDevelopment())
+	assert.Equal(t, false, appConfiguration.IsProduction())
+
+	appConfiguration = setupAndLoadWithEnv("test_config_simple", "development")
+	assert.Equal(t, true, appConfiguration.IsDevelopment())
+	assert.Equal(t, false, appConfiguration.IsProduction())
+
+}
+
 func setupAndLoad(name string) *AppConfiguration {
+	return setupAndLoadWithEnv(name, "")
+}
+
+func setupAndLoadWithEnv(name string, env string) *AppConfiguration {
 	appConfiguration := NewAppConfiguration()
 	appConfiguration.Settings.configPath = "../tests/config"
 	appConfiguration.Settings.configName = name
+	appConfiguration.Settings.environment = env
 
 	appConfiguration.Load()
 
 	return appConfiguration
+
 }

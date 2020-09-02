@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"strings"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
@@ -14,19 +15,39 @@ import (
 // constant as AppConfiguration supports a single configuration file type.
 const configType = "yaml"
 
+const (
+	developCode    = 0
+	productionCode = 1
+)
+
+var environments = []*Environment{
+	&Environment{code: developCode, Name: "development", accepted: []string{"dev", "development"}},
+	&Environment{code: productionCode, Name: "production", accepted: []string{"prod", "production"}},
+}
+var defaultEnvironment = environments[0]
+
 // AppConfiguration holds the current application configuration.
 type AppConfiguration struct {
-	Settings *ConfigurationSettings
-	Logger   *LoggerConfiguration  `yaml:"logger"`
-	Server   *ServerConfiguration  `yaml:"server"`
-	Storage  *StorageConfiguration `yaml:"storage"`
+	Environment *Environment
+	Settings    *ConfigurationSettings
+	Logger      *LoggerConfiguration  `yaml:"logger"`
+	Server      *ServerConfiguration  `yaml:"server"`
+	Storage     *StorageConfiguration `yaml:"storage"`
+}
+
+// Environment represents the settings of a particular application working mode.
+type Environment struct {
+	code     int
+	Name     string
+	accepted []string
 }
 
 // ConfigurationSettings contains some metadata information needed when loading
 // the configuration.
 type ConfigurationSettings struct {
-	configPath string
-	configName string
+	configPath  string
+	configName  string
+	environment string
 }
 
 // LoggerConfiguration contains all available configurable logging settings.
@@ -82,7 +103,7 @@ func (appConfiguration *AppConfiguration) Load() error {
 
 	viper.ReadInConfig()
 
-	envLoader := NewEnvValueLoader()
+	envLoader := newEnvValueLoader()
 	err := viper.Unmarshal(&appConfiguration, func(config *mapstructure.DecoderConfig) {
 		config.TagName = configType
 	}, viper.DecodeHook(
@@ -95,7 +116,42 @@ func (appConfiguration *AppConfiguration) Load() error {
 		),
 	))
 
+	environmentString := appConfiguration.Settings.environment
+	if environmentString != "" {
+		viper.Set("environment", environmentString)
+	}
+	appConfiguration.processEnvironment()
+
 	return err
+}
+
+func (appConfiguration *AppConfiguration) processEnvironment() {
+	envString := viper.GetString("environment")
+
+	for _, s := range environments {
+		for _, acc := range s.accepted {
+			if strings.EqualFold(envString, acc) {
+				appConfiguration.Environment = s
+
+				return
+			}
+		}
+	}
+
+	fmt.Printf("[WARNING] Unknown environment='%s'. Using default '%s'.\r\n", envString, defaultEnvironment.Name)
+	appConfiguration.Environment = defaultEnvironment
+}
+
+// IsProduction retrieves "true" if the current configured environment is "production",
+// otherwise returns "false".
+func (appConfiguration *AppConfiguration) IsProduction() bool {
+	return appConfiguration.Environment.code == productionCode
+}
+
+// IsDevelopment retrieves "true" if the current configured environment is "development",
+// otherwise returns "false".
+func (appConfiguration *AppConfiguration) IsDevelopment() bool {
+	return appConfiguration.Environment.code == developCode
 }
 
 // EnvValueLoader handles loading environment variables.
@@ -104,8 +160,8 @@ type EnvValueLoader struct {
 	reference  map[string]interface{}
 }
 
-// NewEnvValueLoader creates a new instance that can be used for loading env variables.
-func NewEnvValueLoader() *EnvValueLoader {
+// newEnvValueLoader creates a new instance that can be used for loading env variables.
+func newEnvValueLoader() *EnvValueLoader {
 	return &EnvValueLoader{expression: regexp.MustCompile(`^\$.*`)}
 }
 
