@@ -145,6 +145,21 @@ In this way, by following the configuration file, one can have a better view ove
 
 * **Repository** - implements the gateway towards a certain storage (e.g. mongoDB connector). A repository follows the Adapter Design Patter and it must implement basic operation without taking to much of the responsibility. For example, a repository must not force certain uniqueness on an entity properties if that must be imposed at service level.
 
+## Development
+
+### Add a new feature
+
+In order to implement a new feature (usecase) usually the following steps must be achieved:
+
+1. Implement a new service (e.g `property/service/property_service.go`);
+2. Register the service and service creation (e.g `server/services.go`);
+3. Implement a new repository (e.g `property/gateway/storage/mongo/mongo_repository.go`);
+4. Register the repo and its creation (e.g `server/storage/storage.go`);
+5. Implement controller (e.g `property/gateway/http/controller.go`);
+6. Register the service and service creation (e.g `server/controllers.go`).
+
+Even if the project provides a template for feature folder layout, the developer can decide what is the best setup for a particular case.
+
 ## Contributing
 Pull requests are very welcome. For major changes, please open an issue first to discuss what you would like to change.
 
