@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	apperrors "github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
-	shttp "github.com/rghiorghisor/basic-go-rest-api/server/http"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -322,12 +321,13 @@ func TestDeleteUnexpected(t *testing.T) {
 func setup() (r *gin.Engine, serviceMock *PropertyServiceMock) {
 	router := gin.Default()
 	router.Use(
-		shttp.JSONAppErrorHandler(),
+		jsonAppErrorHandler(),
 	)
 	api := router.Group("/api")
 
 	service := new(PropertyServiceMock)
-	RegisterEndpoints(api, service)
+	controller := NewController(service)
+	controller.Register(api)
 
 	return router, service
 }
@@ -350,32 +350,57 @@ type PropertyServiceMock struct {
 	mock.Mock
 }
 
-func (m PropertyServiceMock) Create(ctx context.Context, property *model.Property) error {
+func (m *PropertyServiceMock) Create(ctx context.Context, property *model.Property) error {
 	args := m.Called(property)
 
 	return args.Error(0)
 }
 
-func (m PropertyServiceMock) ReadAll(ctx context.Context) ([]*model.Property, error) {
+func (m *PropertyServiceMock) ReadAll(ctx context.Context) ([]*model.Property, error) {
 	args := m.Called()
 
 	return args.Get(0).([]*model.Property), args.Error(1)
 }
 
-func (m PropertyServiceMock) FindByID(ctx context.Context, id string) (*model.Property, error) {
+func (m *PropertyServiceMock) FindByID(ctx context.Context, id string) (*model.Property, error) {
 	args := m.Called(id)
 
 	return args.Get(0).(*model.Property), args.Error(1)
 }
 
-func (m PropertyServiceMock) Delete(ctx context.Context, id string) error {
+func (m *PropertyServiceMock) Delete(ctx context.Context, id string) error {
 	args := m.Called(id)
 
 	return args.Error(0)
 }
 
-func (m PropertyServiceMock) Update(ctx context.Context, property *model.Property) error {
+func (m *PropertyServiceMock) Update(ctx context.Context, property *model.Property) error {
 	args := m.Called(property)
 
 	return args.Error(0)
+}
+
+func jsonAppErrorHandler() gin.HandlerFunc {
+	return handle(gin.ErrorTypeAny)
+}
+
+func handle(errType gin.ErrorType) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+		detectedErrors := c.Errors
+
+		if len(detectedErrors) > 0 {
+			err := detectedErrors[0].Err
+
+			switch err.(type) {
+			case *apperrors.Error:
+				oError := err.(*apperrors.Error)
+				c.AbortWithError(oError.Code, oError)
+			default:
+				c.AbortWithError(http.StatusInternalServerError, err)
+			}
+
+			return
+		}
+	}
 }

@@ -1,8 +1,8 @@
-package server
+package http
 
 import (
 	"context"
-	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,13 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
-	phttp "github.com/rghiorghisor/basic-go-rest-api/property/gateway/http"
-	shttp "github.com/rghiorghisor/basic-go-rest-api/server/http"
+	"github.com/rghiorghisor/basic-go-rest-api/server"
 )
 
 // AppServer structure that encapsulates all related data.
 type AppServer struct {
 	httpServer *http.Server
+	listener   net.Listener
+	httperror  chan error
 }
 
 // NewAppServer creates a new bare-boned application server.
@@ -27,35 +28,45 @@ func NewAppServer() *AppServer {
 }
 
 // Setup prepares the server but does not starts it.
-func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfiguration, services *Services) {
+func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfiguration, controllers *server.Controllers) {
 	// Initialize the gin router.
 	router := gin.Default()
 
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
-		shttp.JSONAppErrorHandler(),
+		JSONAppErrorHandler(),
 	)
 
-	setupEndpoints(services, router)
+	setupEndpoints(controllers, router)
 	setupServer(server, router, serverConfiguration)
 }
 
 // Run starts the application server based on configuration settings.
-func (server *AppServer) Run() {
-
+func (server *AppServer) Run() error {
+	ch := make(chan error)
 	go func() {
-		logger.Main.Infof("Starting HTTP server, listening on '%v'", server.httpServer.Addr)
-		if err := server.httpServer.ListenAndServe(); err != nil {
-			log.Fatalf("Failed to start: %+v", err)
-		} else {
+		listener, err := net.Listen("tcp", server.httpServer.Addr)
+		if err != nil {
+			ch <- err
+			return
+		}
 
+		server.listener = listener
+		logger.Main.Infof("Starting HTTP server, listening on '%v'", server.httpServer.Addr)
+		if err := server.httpServer.Serve(listener); err != nil {
+			ch <- err
+			return
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, os.Interrupt)
-	<-quit
+	select {
+	case res := <-ch:
+		return res
+	case <-quit:
+	}
 
 	ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdown()
@@ -66,13 +77,16 @@ func (server *AppServer) Run() {
 	}
 
 	logger.Main.Info("Server shutdown.")
+
+	return nil
 }
 
-func setupEndpoints(services *Services, router *gin.Engine) {
+func setupEndpoints(services *server.Controllers, router *gin.Engine) {
 	api := router.Group("/api")
 
-	// Register endpoints to api.
-	phttp.RegisterEndpoints(api, services.PropertyService)
+	for _, c := range services.HTTP {
+		c.Register(api)
+	}
 }
 
 func setupServer(server *AppServer, router *gin.Engine, serverConfiguration *config.HTTPServerConfiguration) {

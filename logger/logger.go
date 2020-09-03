@@ -27,7 +27,7 @@ func New(conf *config.LoggerConfiguration) *Logger {
 	return lgr
 }
 
-// NewLogger creates a new logger based on the provided parameters.
+// NewMainLogger creates a new logger based on the provided parameters.
 func NewMainLogger(lgrDefinition *Definition, w io.Writer) *Logger {
 	return NewLogger(lgrDefinition, w, "main")
 }
@@ -75,6 +75,17 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 	Main = NewMainLogger(lgrDefinition, fd)
 
 	return Main, nil
+}
+
+// NewDummyLogger returns a dummy logger to be used, mainly, in testing.
+func NewDummyLogger(w io.Writer) *Logger {
+	lgrDefinition := &Definition{
+		level:       logrus.InfoLevel,
+		formatter:   &logrus.TextFormatter{},
+		withConsole: false,
+	}
+
+	return NewMainLogger(lgrDefinition, w)
 }
 
 // Info logs the given message, along with the prefix field.

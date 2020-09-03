@@ -30,7 +30,6 @@ func TestHandle404(t *testing.T) {
 }
 
 func TestHandle500(t *testing.T) {
-
 	err := eerrors.New("unexpected")
 	router, mock := setup(err)
 
@@ -61,15 +60,15 @@ func setup(err error) (r *gin.Engine, mock *ErrorsControllerTestMock) {
 type TestStruct struct {
 }
 
-type Controller struct {
+type TestController struct {
 	s *ErrorsControllerTestMock
 }
 
-func NewController() *Controller {
-	return &Controller{new(ErrorsControllerTestMock)}
+func NewController() *TestController {
+	return &TestController{new(ErrorsControllerTestMock)}
 }
 
-func (c *Controller) Operation(ctx *gin.Context) {
+func (c *TestController) Operation(ctx *gin.Context) {
 	err := c.s.Operation(ctx)
 
 	ctx.Error(err)

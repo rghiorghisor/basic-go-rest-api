@@ -159,3 +159,14 @@ func toProperty(b *model.Property) *PropertyDto {
 		Value:       b.Value,
 	}
 }
+
+// Register this controller to the provided group.
+func (ctrl *Controller) Register(routerGroup *gin.RouterGroup) {
+	api := routerGroup.Group("/property")
+
+	api.POST("", ctrl.Create)
+	api.GET("", ctrl.ReadAll)
+	api.GET("/:id", ctrl.Read)
+	api.PUT("/:id", ctrl.Update)
+	api.DELETE("/:id", ctrl.Delete)
+}

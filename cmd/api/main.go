@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	"github.com/rghiorghisor/basic-go-rest-api/server"
+	"github.com/rghiorghisor/basic-go-rest-api/server/http"
 	"github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
 
@@ -20,18 +23,23 @@ func main() {
 	storage.SetupStorage(appConfiguration.Storage.DbConfiguration)
 
 	// Configure and setup services.
-	services := server.NewServices()
-	services.SetupServices(storage)
+	services := server.NewServices(storage)
+
+	// Gather the available controllers.
+	controllers := server.NewControllers(services)
 
 	// Create and run the server.
-	appServer := server.NewAppServer()
-	appServer.Setup(appConfiguration.Server.HTTPServer, services)
-	appServer.Run()
+	appServer := http.NewAppServer()
+	appServer.Setup(appConfiguration.Server.HTTPServer, controllers)
+
+	if err := appServer.Run(); err != nil {
+		log.Fatalf("Failed to start: %+v", err)
+	}
 }
 
 func startLogger(appConfiguration *config.AppConfiguration) {
 	logger.New(appConfiguration.Logger)
 
-	logger.Main.Infof("Loaded configuration.")
+	logger.Main.Info("Loaded configuration.")
 	logger.Main.Infof("Starting application in %s mode...", appConfiguration.Environment.Name)
 }
