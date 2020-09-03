@@ -21,8 +21,8 @@ const (
 )
 
 var environments = []*Environment{
-	&Environment{code: developCode, Name: "development", accepted: []string{"dev", "development"}},
-	&Environment{code: productionCode, Name: "production", accepted: []string{"prod", "production"}},
+	{code: developCode, Name: "development", accepted: []string{"dev", "development"}},
+	{code: productionCode, Name: "production", accepted: []string{"prod", "production"}},
 }
 var defaultEnvironment = environments[0]
 
