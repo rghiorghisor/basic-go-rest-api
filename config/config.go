@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"reflect"
@@ -26,9 +28,20 @@ var environments = []*Environment{
 }
 var defaultEnvironment = environments[0]
 
+var flags = createFlags()
+var flagsInit = initFlags()
+
+type appFlag struct {
+	command      string
+	defaultValue string
+	description  string
+	ref          string
+	validator    func(*appFlag, *AppConfiguration, string) error
+}
+
 // AppConfiguration holds the current application configuration.
 type AppConfiguration struct {
-	Environment *Environment
+	Environment *Environment `yaml:"none"`
 	Settings    *ConfigurationSettings
 	Logger      *LoggerConfiguration  `yaml:"logger"`
 	Server      *ServerConfiguration  `yaml:"server"`
@@ -93,6 +106,10 @@ func NewAppConfiguration() *AppConfiguration {
 // The loading process takes into consideration the appConfiguration.Settings
 // to determine what and how to load.
 func (appConfiguration *AppConfiguration) Load() error {
+	if err := appConfiguration.processFlags(); err != nil {
+		return err
+	}
+
 	configPath := appConfiguration.Settings.configPath
 	configName := appConfiguration.Settings.configName
 
@@ -125,21 +142,80 @@ func (appConfiguration *AppConfiguration) Load() error {
 	return err
 }
 
+func createFlags() []*appFlag {
+	return []*appFlag{
+		{command: "env", defaultValue: "dev", description: "Environment {prod|production|dev|development}", validator: validateEnvFlag},
+	}
+}
+
+func initFlags() error {
+	for _, f := range flags {
+		flag.StringVar(&f.ref, f.command, f.defaultValue, f.description)
+	}
+
+	return nil
+}
+
+func (appConfiguration *AppConfiguration) processFlags() error {
+	flag.Parse()
+
+	for _, f := range flags {
+		if !isFlagPassed(f.command) {
+			continue
+		}
+
+		if err := f.validator(f, appConfiguration, f.ref); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func isFlagPassed(name string) bool {
+	found := false
+
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+
+	return found
+}
+
 func (appConfiguration *AppConfiguration) processEnvironment() {
 	envString := viper.GetString("environment")
 
+	appConfiguration.Environment = appConfiguration.validateRawEnvironment(envString)
+	if appConfiguration.Environment != nil {
+		return
+	}
+
+	appConfiguration.Environment = defaultEnvironment
+	fmt.Printf("[WARNING] Unknown environment='%s'. Using default '%s'.\r\n", envString, defaultEnvironment.Name)
+}
+
+func (appConfiguration *AppConfiguration) validateRawEnvironment(envString string) *Environment {
 	for _, s := range environments {
 		for _, acc := range s.accepted {
 			if strings.EqualFold(envString, acc) {
-				appConfiguration.Environment = s
-
-				return
+				return s
 			}
 		}
 	}
 
-	fmt.Printf("[WARNING] Unknown environment='%s'. Using default '%s'.\r\n", envString, defaultEnvironment.Name)
-	appConfiguration.Environment = defaultEnvironment
+	return nil
+}
+
+func validateEnvFlag(flg *appFlag, appConfiguration *AppConfiguration, envString string) error {
+	e := appConfiguration.validateRawEnvironment(envString)
+	if e == nil {
+		return newError(flg, envString)
+	}
+
+	appConfiguration.Settings.environment = envString
+	return nil
 }
 
 // IsProduction retrieves "true" if the current configured environment is "production",
@@ -181,4 +257,11 @@ func (envValueLoader *EnvValueLoader) load(f reflect.Type, t reflect.Type, data 
 	value := os.Getenv(varName)
 
 	return value, nil
+}
+
+func newError(flg *appFlag, value string) error {
+	s := "Invalid values for flag %s ('%s'). %s description: '%s'"
+	s = fmt.Sprintf(s, flg.command, value, flg.command, flg.description)
+
+	return errors.New(s)
 }

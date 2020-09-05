@@ -13,7 +13,9 @@ import (
 func main() {
 	// Load and validate configuration.
 	appConfiguration := config.NewAppConfiguration()
-	appConfiguration.Load()
+	if err := appConfiguration.Load(); err != nil {
+		log.Fatalf("Cannot configure server: %s", err)
+	}
 
 	// Setup and start the logger.
 	startLogger(appConfiguration)
