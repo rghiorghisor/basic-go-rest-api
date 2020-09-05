@@ -39,17 +39,17 @@ Some of the implementation details one can analyze or take note from this applic
 ## Getting Started
 
 Download modules:
-```
+```console
 go mod download
 ```
 
 Run application locally:
-```
+```console
 go run ./cmd/api/main.go
 ```
 
 Run tests:
-```
+```console
 go test ./...
 ```
 
@@ -96,7 +96,7 @@ The application configuration is achieved by the `./config/config.yml` file load
 | `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
 
 ### Example
-```
+```json
 logger: 
   application-log-console: true
 
@@ -115,7 +115,7 @@ The configuration loading does not use the Viper ENV variables handling but a ne
 
 **Approach in Viper**
 Let's consider the following simple YAML configuration file:
-```
+```json
 server:  
   http:
     port: 8081
@@ -125,7 +125,7 @@ By enabling automatic ENV handling (`viper.AutomaticEnv()`), the name of the use
 **Local approach**
 Even if the above depicted approach works as expected and it can be customized according to different needs (e.g. adding name prefixes, binding properties or key transformation modules), the exact location from which a property is loaded is not very transparent. Still, for smaller environments and configuration files this might not prove itself to be an issue. But for more complex configuration it can become very difficult to determine which of the properties are loaded from the environment and which from the files.
 To address this possible maintainability issue, **Basic Go REST Api** needs the desired ENV variables keys to be specified as the property string value, as it follows:
-```
+```json
 server:  
   http:
     port: "$APP_SERVER_PORT"

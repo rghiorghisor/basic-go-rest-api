@@ -95,8 +95,8 @@ func (lgr *Logger) Info(message string) {
 	}).Info(message)
 }
 
-// Infof formats the give string along with the parameters and logs it, along
-// with the along with the prefix field.
+// Infof formats the give string along with the parameters and logs it as an INFO message,
+// along with the along with the prefix field.
 func (lgr *Logger) Infof(format string, args ...interface{}) {
 	lgr.Logger.WithFields(logrus.Fields{
 		"prefix": lgr.prefix,
@@ -108,4 +108,12 @@ func (lgr *Logger) Error(message string, err error) {
 	lgr.Logger.WithFields(logrus.Fields{
 		"prefix": lgr.prefix,
 	}).WithError(err).Error(message)
+}
+
+// Debugf formats the give string along with the parameters and logs it as a DEBUG message,
+// along with the along with the prefix field.
+func (lgr *Logger) Debugf(format string, args ...interface{}) {
+	lgr.Logger.WithFields(logrus.Fields{
+		"prefix": lgr.prefix,
+	}).Debugf(format, args...)
 }

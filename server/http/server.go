@@ -19,7 +19,6 @@ import (
 type AppServer struct {
 	httpServer *http.Server
 	listener   net.Listener
-	httperror  chan error
 }
 
 // NewAppServer creates a new bare-boned application server.
