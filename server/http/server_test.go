@@ -63,6 +63,7 @@ func TestStart(t *testing.T) {
 	}
 
 	testConnection(t, address)
+	testHealthcheckResponse(t, address)
 	testResponse(t, address)
 }
 
@@ -90,6 +91,21 @@ func testResponse(t *testing.T, address string) {
 		assert.Fail(t, "Cannot connect", err)
 	}
 
+	assert.Equal(t, "OK-test", string(body))
+}
+
+func testHealthcheckResponse(t *testing.T, address string) {
+	resp, err := http.Get("http://localhost" + address + "/healthcheck")
+	if err != nil {
+		assert.Fail(t, "Cannot connect", err)
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		assert.Fail(t, "Cannot connect", err)
+	}
+
 	assert.Equal(t, "OK", string(body))
 }
 
@@ -104,7 +120,7 @@ func (ctrl *DummyController) Register(routerGroup *gin.RouterGroup) {
 }
 
 func (ctrl *DummyController) Create(ctx *gin.Context) {
-	ctx.String(http.StatusCreated, "OK")
+	ctx.String(http.StatusCreated, "OK-test")
 }
 
 func ss(srv *AppServer) int {

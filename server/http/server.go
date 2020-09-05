@@ -80,10 +80,13 @@ func (server *AppServer) Run() error {
 	return nil
 }
 
-func setupEndpoints(services *server.Controllers, router *gin.Engine) {
-	api := router.Group("/api")
+func setupEndpoints(controllers *server.Controllers, router *gin.Engine) {
+	base := router.Group("")
+	healthcheck := NewHealthcheckController()
+	healthcheck.Register(base)
 
-	for _, c := range services.HTTP {
+	api := router.Group("/api")
+	for _, c := range controllers.HTTP {
 		c.Register(api)
 	}
 }
