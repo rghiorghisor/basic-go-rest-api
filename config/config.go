@@ -87,7 +87,14 @@ type HTTPServerConfiguration struct {
 
 // StorageConfiguration holds any settings regarding the application's storage options.
 type StorageConfiguration struct {
-	DbConfiguration *MongoDbConfiguration `yaml:"mongo"`
+	Type                string                `yaml:"type"`
+	BoltDbConfiguration *BoltDbConfiguration  `yaml:"bolt"`
+	DbConfiguration     *MongoDbConfiguration `yaml:"mongo"`
+}
+
+// BoltDbConfiguration hols settings referring to BoltDB as storage option.
+type BoltDbConfiguration struct {
+	Name string `yaml:"name"`
 }
 
 // MongoDbConfiguration hols settings referring to MongoDb as storage option.
@@ -266,7 +273,7 @@ func (envValueLoader *EnvValueLoader) load(appConfiguration *AppConfiguration, f
 	}
 
 	valueString := fmt.Sprintf("%v", data)
-	fmt.Println("---" + valueString)
+
 	if !envValueLoader.expression.MatchString(valueString) {
 		// If the value is not a ENV variable ignore further processing.
 		return data, nil
