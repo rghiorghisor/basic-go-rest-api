@@ -43,5 +43,6 @@ func startLogger(appConfiguration *config.AppConfiguration) {
 	logger.New(appConfiguration.Logger)
 
 	logger.Main.Info("Loaded configuration.")
+	logger.Main.Info(appConfiguration.Stats())
 	logger.Main.Infof("Starting application in %s mode...", appConfiguration.Environment.Name)
 }

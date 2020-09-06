@@ -27,7 +27,6 @@ func TestLoadEnv(t *testing.T) {
 	os.Setenv("SERVER_WRITE_TIMEOUT", "11")
 
 	os.Setenv("MONGO_DB_URI", "mongodb://localhost:27017")
-	os.Setenv("MONGO_DB_NAME", "testdb")
 	os.Setenv("MONGO_DB_PROPERTIES_COLLECTION", "properties_collection")
 
 	appConfiguration, _ := setupAndLoad("test_config_env")
@@ -37,8 +36,12 @@ func TestLoadEnv(t *testing.T) {
 	assert.Equal(t, 11, appConfiguration.Server.HTTPServer.WriteTimeout)
 
 	assert.Equal(t, "mongodb://localhost:27017", appConfiguration.Storage.DbConfiguration.URI)
-	assert.Equal(t, "testdb", appConfiguration.Storage.DbConfiguration.Name)
 	assert.Equal(t, "properties_collection", appConfiguration.Storage.DbConfiguration.PropertiesCollectionName)
+	assert.Equal(t, "{loaded:true "+
+		"loadedFromDir:../tests/config "+
+		"loadedFromFile:test_config_env "+
+		"foundInEnv:[$SERVER_PORT $SERVER_READ_TIMEOUT $SERVER_WRITE_TIMEOUT $MONGO_DB_URI $MONGO_DB_PROPERTIES_COLLECTION] "+
+		"notFoundInEnv:[$MONGO_DB_NAME]}", appConfiguration.Stats())
 }
 
 func TestLoadDefaults(t *testing.T) {

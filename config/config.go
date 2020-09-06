@@ -46,6 +46,7 @@ type AppConfiguration struct {
 	Logger      *LoggerConfiguration  `yaml:"logger"`
 	Server      *ServerConfiguration  `yaml:"server"`
 	Storage     *StorageConfiguration `yaml:"storage"`
+	stats       *stats
 }
 
 // Environment represents the settings of a particular application working mode.
@@ -96,9 +97,20 @@ type MongoDbConfiguration struct {
 	PropertiesCollectionName string `yaml:"properties-collection"`
 }
 
+type stats struct {
+	loaded         bool
+	loadedFromDir  string
+	loadedFromFile string
+	foundInEnv     []interface{}
+	notFoundInEnv  []interface{}
+}
+
 // NewAppConfiguration creates a new application configuration instance.
 func NewAppConfiguration() *AppConfiguration {
-	return NewDefault()
+	new := NewDefault()
+	new.stats = &stats{}
+
+	return new
 }
 
 // Load the application configuration.
@@ -126,7 +138,9 @@ func (appConfiguration *AppConfiguration) Load() error {
 	}, viper.DecodeHook(
 		mapstructure.ComposeDecodeHookFunc(
 			func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
-				return envLoader.load(f, t, data)
+				found, err := envLoader.load(appConfiguration, f, t, data)
+
+				return found, err
 			},
 			mapstructure.StringToTimeDurationHookFunc(),
 			mapstructure.StringToSliceHookFunc(","),
@@ -138,6 +152,10 @@ func (appConfiguration *AppConfiguration) Load() error {
 		viper.Set("environment", environmentString)
 	}
 	appConfiguration.processEnvironment()
+
+	appConfiguration.stats.loaded = true
+	appConfiguration.stats.loadedFromDir = configPath
+	appConfiguration.stats.loadedFromFile = configName
 
 	return err
 }
@@ -241,13 +259,14 @@ func newEnvValueLoader() *EnvValueLoader {
 	return &EnvValueLoader{expression: regexp.MustCompile(`^\$.*`)}
 }
 
-func (envValueLoader *EnvValueLoader) load(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
+func (envValueLoader *EnvValueLoader) load(appConfiguration *AppConfiguration, f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
 	if f == reflect.TypeOf(envValueLoader.reference) {
 		// If it is not a value, but a struct ignore further processing.
 		return data, nil
 	}
 
 	valueString := fmt.Sprintf("%v", data)
+	fmt.Println("---" + valueString)
 	if !envValueLoader.expression.MatchString(valueString) {
 		// If the value is not a ENV variable ignore further processing.
 		return data, nil
@@ -255,6 +274,12 @@ func (envValueLoader *EnvValueLoader) load(f reflect.Type, t reflect.Type, data 
 
 	varName := valueString[1:]
 	value := os.Getenv(varName)
+
+	if value == "" {
+		appConfiguration.stats.notFoundInEnv = append(appConfiguration.stats.notFoundInEnv, valueString)
+	} else {
+		appConfiguration.stats.foundInEnv = append(appConfiguration.stats.foundInEnv, valueString)
+	}
 
 	return value, nil
 }
@@ -264,4 +289,9 @@ func newError(flg *appFlag, value string) error {
 	s = fmt.Sprintf(s, flg.command, value, flg.command, flg.description)
 
 	return errors.New(s)
+}
+
+// Stats retrieves the configuration loading statistics.
+func (appConfiguration *AppConfiguration) Stats() string {
+	return fmt.Sprintf("%+v", *appConfiguration.stats)
 }
