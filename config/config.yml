@@ -8,6 +8,11 @@ server:
     port: 8081    
 
 storage:
+  type: local
+  
+  bolt:
+    name: "local-storage/testdbbolt"   
+
   mongo:
     uri: "mongodb://localhost:27017"
     name: "testdb"

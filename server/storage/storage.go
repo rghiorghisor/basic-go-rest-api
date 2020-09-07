@@ -1,15 +1,11 @@
 package storage
 
 import (
-	"context"
-	"log"
-	"time"
+	"strings"
 
 	"github.com/rghiorghisor/basic-go-rest-api/config"
+	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	pstorage "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage"
-	pgmongo "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage/mongo"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Storage structure contains all repositories.
@@ -22,41 +18,24 @@ func NewStorage() *Storage {
 	return &Storage{}
 }
 
-// SetupStorage prepares the MongoDB connection based on the provided
+// SetupStorage prepares the repository connections based on the provided
 // configuration and retrieves a handle for the database.
 //
 // Besides connecting to the database it also prepares repositories based on any
 // collection names.
-func (storage *Storage) SetupStorage(dbConfiguration *config.MongoDbConfiguration) {
-	// Create db connection.
-	db := connect(dbConfiguration)
+func (storage *Storage) SetupStorage(config *config.StorageConfiguration) {
+	if strings.EqualFold("mongo", config.Type) {
+		// Check the initMongo function to add any new mongoDB repository.
+		initMongo(storage, config.DbConfiguration)
 
-	// Create property repository.
-	propCollectionName := dbConfiguration.PropertiesCollectionName
-	storage.PropertyRepository = pgmongo.NewMongoPropertyRepository(db, propCollectionName)
-}
-
-func connect(dbConfiguration *config.MongoDbConfiguration) *mongo.Database {
-	uri := dbConfiguration.URI
-	dbName := dbConfiguration.Name
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
-		log.Fatalf("Cannot establish mongoDB connection:")
+		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
+	if !strings.EqualFold("local", config.Type) {
+		logger.Main.Infof("Unknown storage type '%s'. Using default '%s'.\r\n", config.Type, "local")
 	}
 
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Check the initBolt function to add any new local repository.
+	initBolt(storage, config.BoltDbConfiguration)
 
-	return client.Database(dbName)
 }

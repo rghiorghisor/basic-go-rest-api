@@ -6,6 +6,7 @@ func NewDefault() *AppConfiguration {
 	return &AppConfiguration{
 		Settings: newDefaultSettings(),
 		Logger:   newDefaultLoggerConfiguration(),
+		Storage:  newDefaultStorageConfiguration(),
 		Server:   newDefaultServerConfiguration(),
 	}
 }
@@ -38,5 +39,17 @@ func newDefaultHTTPServerConfiguration() *HTTPServerConfiguration {
 		Port:         8080,
 		ReadTimeout:  10,
 		WriteTimeout: 10,
+	}
+}
+
+func newDefaultStorageConfiguration() *StorageConfiguration {
+	return &StorageConfiguration{
+		BoltDbConfiguration: newDefaultBoltDbConfiguration(),
+	}
+}
+
+func newDefaultBoltDbConfiguration() *BoltDbConfiguration {
+	return &BoltDbConfiguration{
+		Name: "local-storage/boltdb",
 	}
 }

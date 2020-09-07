@@ -52,7 +52,18 @@ server:
 # Defines where the serve connect to as a storage.
 storage:
 
-  # Defines the mongoDB settings.
+  # The storage type that must be used. Accepted values are (case insensitive): local, mongo.
+  # Default value is "local".
+  type: "local|mongo"
+
+  # Defines the local storage settings.
+  local:
+
+    # The location where the local storage must be created and used from.
+    # Default value is "local-storage/boltdb".
+    name: "local-storage/boltdb"
+
+  # Defines the mongoDB storage settings. Will be used only if storage.type="mongo"
   mongo:
 
     # The mongoDB URI.

@@ -22,7 +22,7 @@ func main() {
 
 	// Configure and connect to storage.
 	storage := storage.NewStorage()
-	storage.SetupStorage(appConfiguration.Storage.DbConfiguration)
+	storage.SetupStorage(appConfiguration.Storage)
 
 	// Configure and setup services.
 	services := server.NewServices(storage)

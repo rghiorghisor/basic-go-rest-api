@@ -12,7 +12,7 @@ This application (boilerplate) is a take on developing a simple Go REST API, bac
 
 - [Git](https://git-scm.com/)
 - [Go](https://golang.org/dl/)
-- [mongoDB](https://www.mongodb.com/)
+- [mongoDB](https://www.mongodb.com/) (*Optional*)
 
 ## Details & Features
 
@@ -22,7 +22,8 @@ This application (boilerplate) is a take on developing a simple Go REST API, bac
 - Clean Architecture code organization (use case centric);
 - 3tier application with:
   - RESTful API as presentation layer;
-  - mongoDB as data layer;
+  - mongoDB or embedded BoltDB as data layer;
+- Switch between local (embedded BoltDB) or remote (mongoDB) storages;
 - Configurable through YAML files.
 
 ### Implementation details
@@ -34,7 +35,8 @@ Some of the implementation details one can analyze or take note from this applic
 - How to organize a use case (feature) in 3 layers;
 - How to create a HTTP server using [gin-gonic/gin](https://github.com/gin-gonic/gin);
 - How to implement standard RESTful CRUD operations (RFC 7231);
-- How to use mongoDB GO driver ([mongodb/mongo-go-driver](https://github.com/mongodb/mongo-go-driver)).
+- How to use mongoDB GO driver ([mongodb/mongo-go-driver](https://github.com/mongodb/mongo-go-driver));
+- How to setup and use [Storm](https://github.com/asdine/storm).
 
 ## Getting Started
 
@@ -67,13 +69,15 @@ go test ./...
 │   ├── gateway            The gateways implementations;
 |   |   ├── http           The HTTP gateways (Controllers);
 |   |   └── storage        The storage gateway implementations;
+|   |       ├── bbolt      The bolt embedded database gateway (Repository); 
 |   |       └── mongo      The mongoDB gateway (Repository);
 │   └── service            The property business logic;
 ├── server                 The server application logic and dependencies;
 │   ├── http               The HTTP server implementations;
 |   └── storage            The server's storage overall implementation;
-└── tests                  Contains additional files for testing purposes;
-    └── config             Configuration files used by config loading tests.
+├── tests                  Contains additional files for testing purposes;
+|   └── config             Configuration files used by config loading tests;
+└── util                   Application overall utilities.
 ```
 
 ## Configuration
@@ -91,9 +95,15 @@ The application configuration is achieved by the `./config/config.yml` file load
 | `server.http.port` | The port that the server listens on. Default value is `8080`|
 | `server.http.read-timeout` | The server read timeout (in seconds). Default value is `10`.|
 | `server.http.write-timeout` | The server write timeout (in seconds). Default value is `10`.|
+| `storage.type` | The storage type that must be used. Accepted values are (case insensitive): `local`, `mongo`. Default value is `local`. |
+| `storage.local.name` | The location where the local storage must be created and used from. Default value is `local-storage/boltdb`. |
+| `storage.mongo.name` | The database name. *No default value is provided*. |
+| `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
 | `storage.mongo.uri` | The mongoDB URI. *No default value is provided*. |
 | `storage.mongo.name` | The database name. *No default value is provided*. |
 | `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
+
+**Please see `config/config.default.yml` for a full sample and depiction of configuration settings.**
 
 ### Example
 ```json
