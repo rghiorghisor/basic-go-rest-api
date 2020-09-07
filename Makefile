@@ -18,4 +18,7 @@ build:
 		CGO_ENABLED=0 GOOS=linux go build -o ./.bin/app cmd/api/main.go
 
 run-dev:
-	go run  cmd/api/main.go
+	go run cmd/api/main.go
+
+run-prod:
+	go run cmd/api/main.go -env="production"
