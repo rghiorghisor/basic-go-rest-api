@@ -3,9 +3,9 @@ package logger
 import (
 	"io"
 	"os"
-	"path/filepath"
 
 	"github.com/rghiorghisor/basic-go-rest-api/config"
+	"github.com/rghiorghisor/basic-go-rest-api/util"
 	logrus "github.com/sirupsen/logrus"
 )
 
@@ -59,12 +59,8 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 	fileName := lgrDefinition.fileName
 
 	// Create the directory in case it does not exists.
-	dirName := filepath.Dir(fileName)
-	if _, serr := os.Stat(dirName); serr != nil {
-		merr := os.MkdirAll(dirName, os.ModePerm)
-		if merr != nil {
-			panic(merr)
-		}
+	if err := util.CreateParentFolder(fileName); err != nil {
+		return nil, err
 	}
 
 	fd, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
