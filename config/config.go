@@ -129,8 +129,6 @@ func (appConfiguration *AppConfiguration) Load() error {
 		return err
 	}
 
-	fmt.Println(flag.Args())
-
 	configPath := appConfiguration.Settings.configPath
 	configName := appConfiguration.Settings.configName
 

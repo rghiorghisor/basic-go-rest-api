@@ -12,14 +12,14 @@ import (
 
 // PropertyService defines the service handling property operations.
 type PropertyService struct {
-	repository storage.Repository ``
+	repository storage.Repository
 }
 
-// NewPropertyService creates a PropertyService.
+// New creates a PropertyService.
 //
 // As this service needs access to a repository to perform action, it is the
 // responsibility of the service to get the correct repo from the storage parameter.
-func NewPropertyService(storage *serverstorage.Storage) *PropertyService {
+func New(storage *serverstorage.Storage) *PropertyService {
 	return &PropertyService{
 		repository: storage.PropertyRepository,
 	}

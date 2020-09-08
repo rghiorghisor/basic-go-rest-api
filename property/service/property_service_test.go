@@ -144,8 +144,8 @@ func TestDelete(t *testing.T) {
 
 func setup() (service property.Service, repo *PropertyRepositoryMock) {
 	repoMock := new(PropertyRepositoryMock)
-	storage := &storage.Storage{repoMock}
-	service = NewPropertyService(storage)
+	storage := &storage.Storage{PropertyRepository: repoMock}
+	service = New(storage)
 
 	return service, repoMock
 }
