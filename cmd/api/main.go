@@ -21,8 +21,10 @@ func main() {
 	startLogger(appConfiguration)
 
 	// Configure and connect to storage.
-	storage := storage.NewStorage()
-	storage.SetupStorage(appConfiguration.Storage)
+	storage := storage.New()
+	if err := storage.SetupStorage(appConfiguration.Storage); err != nil {
+		logger.Main.Error("Cannot setup storage", err)
+	}
 
 	// Configure and setup services.
 	services := server.NewServices(storage)

@@ -12,19 +12,33 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func initMongo(storage *Storage, config *config.MongoDbConfiguration) {
+type mongoFactory struct {
+}
+
+func newMongoFactory() factory {
+	return new(mongoFactory)
+}
+
+func (f *mongoFactory) id() string {
+	return "mongo"
+}
+
+func (f *mongoFactory) init(storage *Storage, config *config.StorageConfiguration) error {
+	mongoConfig := config.DbConfiguration
 	logger.Main.Info("Setting up mongoDb storage...")
 
 	// Create db connection.
-	db := connect(config)
+	db := f.connect(mongoConfig)
 
 	// Setup repositories.
-	storage.PropertyRepository = property_mongo.New(db, config.PropertiesCollectionName)
+	storage.PropertyRepository = property_mongo.New(db, mongoConfig.PropertiesCollectionName)
 
 	// Add here any new repository...
+
+	return nil
 }
 
-func connect(dbConfiguration *config.MongoDbConfiguration) *mongo.Database {
+func (f *mongoFactory) connect(dbConfiguration *config.MongoDbConfiguration) *mongo.Database {
 	uri := dbConfiguration.URI
 	dbName := dbConfiguration.Name
 

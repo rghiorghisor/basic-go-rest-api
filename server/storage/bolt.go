@@ -8,11 +8,23 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/util"
 )
 
-func initBolt(storage *Storage, config *config.BoltDbConfiguration) error {
+type boltFactory struct {
+}
+
+func newBoltFactory() factory {
+	return new(boltFactory)
+}
+
+func (f *boltFactory) id() string {
+	return "local"
+}
+
+func (f *boltFactory) init(storage *Storage, config *config.StorageConfiguration) error {
+	boltConfig := config.BoltDbConfiguration
 	logger.Main.Info("Setting up local(storm) storage...")
 
 	// Create db connection.
-	dbt, err := connectStorm(config)
+	dbt, err := f.connectStorm(boltConfig)
 	if err != nil {
 		return err
 	}
@@ -25,7 +37,7 @@ func initBolt(storage *Storage, config *config.BoltDbConfiguration) error {
 	return nil
 }
 
-func connectStorm(config *config.BoltDbConfiguration) (*storm.DB, error) {
+func (f *boltFactory) connectStorm(config *config.BoltDbConfiguration) (*storm.DB, error) {
 	util.CreateParentFolder(config.Name)
 
 	return storm.Open(config.Name)

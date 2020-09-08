@@ -15,7 +15,9 @@ type Services struct {
 // NewServices retrieves a new Services struct.
 func NewServices(storage *storage.Storage) *Services {
 	return &Services{
-		property_service.NewPropertyService(storage),
-		// Initialize here new services.
+		property_service.New(storage),
+
+		// Initialize here new services...
+
 	}
 }

@@ -320,6 +320,30 @@ func TestUpdateUnExpected(t *testing.T) {
 	assert.Equal(t, g_errors.New("database not open"), err)
 }
 
+func BenchmarkReadAll(b *testing.B) {
+	repo := setup()
+	defer tearDown(repo)
+
+	prop1 := &model.Property{
+		Name:        "test.name.1",
+		Description: "test.description.1",
+		Value:       "test.value.1",
+	}
+	prop2 := &model.Property{
+		Name:        "test.name.2",
+		Description: "test.description.2",
+		Value:       "test.value.2",
+	}
+
+	repo.Create(context.Background(), prop1)
+	repo.Create(context.Background(), prop2)
+
+	for n := 0; n < b.N; n++ {
+		repo.ReadAll(context.Background())
+	}
+
+}
+
 func setup() *PropertyRepository {
 	util.CreateParentFolder(defaultDB)
 
