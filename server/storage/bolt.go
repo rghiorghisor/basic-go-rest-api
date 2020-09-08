@@ -4,7 +4,7 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
-	property_bolt "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage/bbolt"
+	property_bolt "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage/bolt"
 	"github.com/rghiorghisor/basic-go-rest-api/util"
 )
 

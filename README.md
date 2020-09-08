@@ -69,7 +69,7 @@ go test ./...
 │   ├── gateway            The gateways implementations;
 |   |   ├── http           The HTTP gateways (Controllers);
 |   |   └── storage        The storage gateway implementations;
-|   |       ├── bbolt      The bolt embedded database gateway (Repository); 
+|   |       ├── bolt      The bolt embedded database gateway (Repository); 
 |   |       └── mongo      The mongoDB gateway (Repository);
 │   └── service            The property business logic;
 ├── server                 The server application logic and dependencies;
