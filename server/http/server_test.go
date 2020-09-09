@@ -20,6 +20,7 @@ import (
 func TestStart(t *testing.T) {
 	buf := new(bytes.Buffer)
 	logger.Main = logger.NewDummyLogger(buf)
+	logger.Access = logger.NewDummyLogger(buf)
 
 	// Start on any available port.
 	serverConfiguration := &config.HTTPServerConfiguration{

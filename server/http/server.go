@@ -32,6 +32,7 @@ func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfigurati
 	router := gin.Default()
 
 	router.Use(
+		AccessLogger(),
 		gin.Recovery(),
 		gin.Logger(),
 		JSONAppErrorHandler(),
