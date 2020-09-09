@@ -74,17 +74,17 @@ func TestNewDefinitionFile(t *testing.T) {
 	definition := NewDefinition(conf)
 	assert.Equal(t, definition.fileName, "logs/log-name.log")
 
-	conf.AppLogName = "log-name-2.log"
+	conf.FileName = "log-name-2.log"
 	definition = NewDefinition(conf)
 	assert.Equal(t, definition.fileName, "logs/log-name-2.log")
 }
 
 func getSimpleConfiguration() *config.LoggerConfiguration {
 	return &config.LoggerConfiguration{
-		Format:        "text",
-		Level:         "info",
-		LogsDir:       "./logs",
-		AppLogName:    "log-name",
-		AppLogConsole: true,
+		Format:      "text",
+		Level:       "info",
+		LogsDir:     "./logs",
+		FileName:    "log-name",
+		WithConsole: true,
 	}
 }

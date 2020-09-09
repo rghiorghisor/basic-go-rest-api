@@ -87,12 +87,19 @@ The application configuration is achieved by the `./config/config.yml` file load
 
 | Name | Description |
 | --- | --- |
-| `logger.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn`, `warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
-| `logger.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default `info` is considered.|
-| `logger.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `./logs`.|
-| `logger.application-log-file-name` | The name of the main application log. Default value is `basic-go-rest-api`.|
-| `logger.application-log-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. Default value is `false`. |
-| `server.http.port` | The port that the server listens on. Default value is `8080`|
+| `logger.main.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn`, `warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
+| `logger.main.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default `info` is considered.|
+| `logger.main.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `./logs`.|
+| `logger.main.file-name` | The name of the log file name. Default value is `basic-go-rest-api`.|
+| `logger.main.prefix` | The default prefix associated with this logger; will be added along with all messages. Default value is `main`. |
+| `logger.main.with-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. Default value is `false`. |
+| `logger.access.level` | The logger level. Accepted values are (*case insensitive*): `panic`, `fatal`, `error`, `warn`, `warning`, `info`, `debug`, `trace`. If none is present the default `info` is considered. Read more about [Logrus Levels](https://github.com/sirupsen/logrus#level-logging). |
+| `logger.access.format` | The logger message format. Accepted values are (*case insensitive*): `text`, `json`. If none is present the default `info` is considered.|
+| `logger.access.dir` | The directory where all log files are placed. If it does not exist its creation will be attempted. Default value is `./logs`.|
+| `logger.access.file-name` | The name of the log file name. Default value is `access`.|
+| `logger.access.prefix` | The default prefix associated with this logger; will be added along with all messages. Default value is `access`. |
+| `logger.access.with-console` | Boolean value that if `true` will also print the log messages to console; otherwise the messages can be found only in the log files. Default value is `false`. |
+| `server.http.port` | The port that the server listens on. Default value is `8080`. |
 | `server.http.read-timeout` | The server read timeout (in seconds). Default value is `10`.|
 | `server.http.write-timeout` | The server write timeout (in seconds). Default value is `10`.|
 | `storage.type` | The storage type that must be used. Accepted values are (case insensitive): `local`, `mongo`. Default value is `local`. |

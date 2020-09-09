@@ -23,6 +23,7 @@ type Definition struct {
 	formatter   logrus.Formatter
 	level       logrus.Level
 	withConsole bool
+	prefix      string
 }
 
 // NewDefinition loads the values from the provided configuration, processes them
@@ -36,13 +37,14 @@ func NewDefinition(conf *config.LoggerConfiguration) *Definition {
 		fileName:    fileName,
 		formatter:   formatter,
 		level:       level,
-		withConsole: conf.AppLogConsole,
+		withConsole: conf.WithConsole,
+		prefix:      conf.Prefix,
 	}
 }
 
 func getFileName(conf *config.LoggerConfiguration) string {
 	dirString := conf.LogsDir
-	fileName := conf.AppLogName
+	fileName := conf.FileName
 
 	// Add file extension in case it is not already there.
 	if !strings.HasSuffix(fileName, defaultLogExtension) {
@@ -65,6 +67,8 @@ func getFormatter(conf *config.LoggerConfiguration) logrus.Formatter {
 
 	textFormatter := &prefixed.TextFormatter{
 		TimestampFormat: defaultTimestampFormat,
+		DisableColors:   false,
+		ForceColors:     true,
 		FullTimestamp:   true,
 		ForceFormatting: true,
 	}

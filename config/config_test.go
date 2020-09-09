@@ -47,11 +47,11 @@ func TestLoadEnv(t *testing.T) {
 func TestLoadDefaults(t *testing.T) {
 	appConfiguration, _ := setupAndLoad("test_config_simple")
 
-	assert.Equal(t, "text", appConfiguration.Logger.Format)
-	assert.Equal(t, "info", appConfiguration.Logger.Level)
-	assert.Equal(t, "./logs", appConfiguration.Logger.LogsDir)
-	assert.Equal(t, "basic-go-rest-api", appConfiguration.Logger.AppLogName)
-	assert.Equal(t, false, appConfiguration.Logger.AppLogConsole)
+	assert.Equal(t, "text", appConfiguration.Loggers.MainLogger.Format)
+	assert.Equal(t, "info", appConfiguration.Loggers.MainLogger.Level)
+	assert.Equal(t, "./logs", appConfiguration.Loggers.MainLogger.LogsDir)
+	assert.Equal(t, "basic-go-rest-api", appConfiguration.Loggers.MainLogger.FileName)
+	assert.Equal(t, false, appConfiguration.Loggers.MainLogger.WithConsole)
 
 	assert.Equal(t, developCode, appConfiguration.Environment.code)
 }

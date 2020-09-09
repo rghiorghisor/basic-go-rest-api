@@ -43,7 +43,7 @@ type appFlag struct {
 type AppConfiguration struct {
 	Environment *Environment `yaml:"none"`
 	Settings    *ConfigurationSettings
-	Logger      *LoggerConfiguration  `yaml:"logger"`
+	Loggers     *LoggersConfiguration `yaml:"logger"`
 	Server      *ServerConfiguration  `yaml:"server"`
 	Storage     *StorageConfiguration `yaml:"storage"`
 	stats       *stats
@@ -64,13 +64,20 @@ type ConfigurationSettings struct {
 	environment string
 }
 
+// LoggersConfiguration contains the settings of all available loggers.
+type LoggersConfiguration struct {
+	MainLogger   *LoggerConfiguration `yaml:"main"`
+	AccessLogger *LoggerConfiguration `yaml:"access"`
+}
+
 // LoggerConfiguration contains all available configurable logging settings.
 type LoggerConfiguration struct {
-	Format        string `yaml:"format"`
-	Level         string `yaml:"level"`
-	LogsDir       string `yaml:"dir"`
-	AppLogName    string `yaml:"application-log-file-name"`
-	AppLogConsole bool   `yaml:"application-log-console"`
+	Format      string `yaml:"format"`
+	Level       string `yaml:"level"`
+	LogsDir     string `yaml:"dir"`
+	FileName    string `yaml:"file-name"`
+	WithConsole bool   `yaml:"with-console"`
+	Prefix      string `yaml:"prefix"`
 }
 
 // ServerConfiguration holds any settings regarding the application's server.

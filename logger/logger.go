@@ -12,6 +12,9 @@ import (
 // Main is the main application logger that should contain any important information.
 var Main *Logger
 
+// Access is the application access logger that should contain the requests information.
+var Access *Logger
+
 // Logger the struct containing all available loggers.
 type Logger struct {
 	Logger *logrus.Logger
@@ -19,21 +22,20 @@ type Logger struct {
 }
 
 // New generated a new logger ready to be used.
-func New(conf *config.LoggerConfiguration) *Logger {
-	lgrDefinition := NewDefinition(conf)
-
+func New(conf *config.LoggersConfiguration) *Logger {
+	lgrDefinition := NewDefinition(conf.MainLogger)
 	lgr, _ := NewFileLogger(lgrDefinition)
+	Main = lgr
+
+	lgrDefinition = NewDefinition(conf.AccessLogger)
+	lgr, _ = NewFileLogger(lgrDefinition)
+	Access = lgr
 
 	return lgr
 }
 
-// NewMainLogger creates a new logger based on the provided parameters.
-func NewMainLogger(lgrDefinition *Definition, w io.Writer) *Logger {
-	return NewLogger(lgrDefinition, w, "main")
-}
-
 // NewLogger creates a new logger based on the provided parameters.
-func NewLogger(lgrDefinition *Definition, w io.Writer, prefix string) *Logger {
+func NewLogger(lgrDefinition *Definition, w io.Writer) *Logger {
 	newLogger := logrus.New()
 
 	newLogger.Level = lgrDefinition.level
@@ -48,7 +50,7 @@ func NewLogger(lgrDefinition *Definition, w io.Writer, prefix string) *Logger {
 
 	lgr := &Logger{
 		Logger: newLogger,
-		prefix: prefix,
+		prefix: lgrDefinition.prefix,
 	}
 
 	return lgr
@@ -68,9 +70,7 @@ func NewFileLogger(lgrDefinition *Definition) (*Logger, error) {
 		return nil, err
 	}
 
-	Main = NewMainLogger(lgrDefinition, fd)
-
-	return Main, nil
+	return NewLogger(lgrDefinition, fd), nil
 }
 
 // NewDummyLogger returns a dummy logger to be used, mainly, in testing.
@@ -79,9 +79,10 @@ func NewDummyLogger(w io.Writer) *Logger {
 		level:       logrus.InfoLevel,
 		formatter:   &logrus.TextFormatter{},
 		withConsole: false,
+		prefix:      "main",
 	}
 
-	return NewMainLogger(lgrDefinition, w)
+	return NewLogger(lgrDefinition, w)
 }
 
 // Info logs the given message, along with the prefix field.
@@ -97,6 +98,20 @@ func (lgr *Logger) Infof(format string, args ...interface{}) {
 	lgr.Logger.WithFields(logrus.Fields{
 		"prefix": lgr.prefix,
 	}).Infof(format, args...)
+}
+
+// Warn logs the given message as an warning.
+func (lgr *Logger) Warn(message string) {
+	lgr.Logger.WithFields(logrus.Fields{
+		"prefix": lgr.prefix,
+	}).Warn(message)
+}
+
+// Errore logs the given message as an error, along with the prefix field.
+func (lgr *Logger) Errore(message string) {
+	lgr.Logger.WithFields(logrus.Fields{
+		"prefix": lgr.prefix,
+	}).Error(message)
 }
 
 // Error logs the given message as an error, along with the prefix field.

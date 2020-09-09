@@ -5,7 +5,7 @@ package config
 func NewDefault() *AppConfiguration {
 	return &AppConfiguration{
 		Settings: newDefaultSettings(),
-		Logger:   newDefaultLoggerConfiguration(),
+		Loggers:  newDefaultLoggersConfiguration(),
 		Storage:  newDefaultStorageConfiguration(),
 		Server:   newDefaultServerConfiguration(),
 	}
@@ -18,13 +18,32 @@ func newDefaultSettings() *ConfigurationSettings {
 	}
 }
 
-func newDefaultLoggerConfiguration() *LoggerConfiguration {
+func newDefaultLoggersConfiguration() *LoggersConfiguration {
+	return &LoggersConfiguration{
+		MainLogger:   newDefaultMainLoggerConfiguration(),
+		AccessLogger: newDefaultAccessLoggerConfiguration(),
+	}
+}
+
+func newDefaultMainLoggerConfiguration() *LoggerConfiguration {
 	return &LoggerConfiguration{
-		Format:        "text",
-		Level:         "info",
-		LogsDir:       "./logs",
-		AppLogName:    "basic-go-rest-api",
-		AppLogConsole: false,
+		Format:      "text",
+		Level:       "info",
+		LogsDir:     "./logs",
+		FileName:    "basic-go-rest-api",
+		WithConsole: false,
+		Prefix:      "main",
+	}
+}
+
+func newDefaultAccessLoggerConfiguration() *LoggerConfiguration {
+	return &LoggerConfiguration{
+		Format:      "text",
+		Level:       "error",
+		LogsDir:     "./logs",
+		FileName:    "access",
+		WithConsole: false,
+		Prefix:      "access",
 	}
 }
 

@@ -1,7 +1,10 @@
 environment: "dev"
 
-logger: 
-  application-log-console: true
+logger:
+  main: 
+    with-console: true
+  access: 
+    with-console: true
 
 server:
   http:    

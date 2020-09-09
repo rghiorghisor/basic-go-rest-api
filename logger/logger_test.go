@@ -15,10 +15,11 @@ func TestInfo(t *testing.T) {
 	definition := &Definition{
 		level:     logrus.InfoLevel,
 		formatter: &logrus.TextFormatter{},
+		prefix:    "main",
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewMainLogger(definition, buf)
+	lgr := NewLogger(definition, buf)
 
 	lgr.Info("test message")
 
@@ -33,10 +34,11 @@ func TestInfof(t *testing.T) {
 	definition := &Definition{
 		level:     logrus.DebugLevel,
 		formatter: &logrus.TextFormatter{},
+		prefix:    "main",
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewMainLogger(definition, buf)
+	lgr := NewLogger(definition, buf)
 
 	lgr.Infof("test message no %d", 1)
 
@@ -51,10 +53,11 @@ func TestInfo1(t *testing.T) {
 		level:       logrus.DebugLevel,
 		formatter:   &logrus.TextFormatter{},
 		withConsole: true,
+		prefix:      "main",
 	}
 
 	buf := new(bytes.Buffer)
-	lgr := NewMainLogger(definition, buf)
+	lgr := NewLogger(definition, buf)
 
 	lgr.Info("test message")
 

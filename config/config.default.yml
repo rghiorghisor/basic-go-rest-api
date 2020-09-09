@@ -10,26 +10,60 @@ environment: "dev|development|prod|production"
 
 # Defines how the application logging works.
 logger:
+
+  # Define the main application logger settings.
+  main: 
   
-  # The logger message format. Accepted values are (case insensitive): text, json. 
-  # If none is present the default "text" is considered.
-  format: "text|json"
+    # The logger message format. Accepted values are (case insensitive): text, json. 
+    # If none is present the default "text" is considered.
+    format: "text|json"
 
-  # The logger level. Accepted values are (case insensitive): panic, fatal, error, warn, warning, info, debug, trace. 
-  # If none is present the default "info" is considered.
-  level: "panic|fatal|error|warn|warning|info|debug|trace"
+    # The logger level. Accepted values are (case insensitive): panic, fatal, error, warn, warning, info, debug, trace. 
+    # If none is present the default "info" is considered.
+    level: "panic|fatal|error|warn|warning|info|debug|trace"
 
-  # The directory where all log files are placed. 
-  # If it does not exist its creation will be attempted. Default value is "./logs".
-  dir:
+    # The directory where all log files are placed. 
+    # If it does not exist its creation will be attempted. Default value is "./logs".
+    dir:
 
-  # The name of the main application log. 
-  # Default value is "basic-go-rest-api.log"
-  application-log-file-name:
+    # The name of the log file name. 
+    # Default value is "basic-go-rest-api.log"
+    file-name:
 
-  # Boolean value that if true will also print the log messages to console; otherwise the messages can be found only in the log files. 
-  # Default value is "false".  
-  application-log-console: true
+    # The default prefix associated with this logger; will be added along with all messages.
+    # Default value is "main".
+    prefix: "main"
+
+    # Boolean value that if true will also print the log messages to console; otherwise the messages can be found only in the log files. 
+    # Default value is "false".  
+    with-console: false
+
+      # Define the application access logger settings.
+  access: 
+  
+    # The logger message format. Accepted values are (case insensitive): text, json. 
+    # If none is present the default "text" is considered.
+    format: "text|json"
+
+    # The logger level. Accepted values are (case insensitive): panic, fatal, error, warn, warning, info, debug, trace. 
+    # If none is present the default "error" is considered.
+    level: "panic|fatal|error|warn|warning|info|debug|trace"
+
+    # The directory where all log files are placed. 
+    # If it does not exist its creation will be attempted. Default value is "./logs".
+    dir:
+
+    # The name of the log file name. 
+    # Default value is "access.log".
+    file-name:
+
+    # The default prefix associated with this logger; will be added along with all messages.
+    # Default value is "access".
+    prefix: "access"
+
+    # Boolean value that if true will also print the log messages to console; otherwise the messages can be found only in the log files. 
+    # Default value is "false".  
+    with-console: false
 
 # Defines how the server works.
 server:

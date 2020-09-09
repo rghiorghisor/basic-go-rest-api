@@ -42,7 +42,7 @@ func main() {
 }
 
 func startLogger(appConfiguration *config.AppConfiguration) {
-	logger.New(appConfiguration.Logger)
+	logger.New(appConfiguration.Loggers)
 
 	logger.Main.Info("Loaded configuration.")
 	logger.Main.Info(appConfiguration.Stats())
