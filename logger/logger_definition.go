@@ -67,8 +67,6 @@ func getFormatter(conf *config.LoggerConfiguration) logrus.Formatter {
 
 	textFormatter := &prefixed.TextFormatter{
 		TimestampFormat: defaultTimestampFormat,
-		DisableColors:   false,
-		ForceColors:     true,
 		FullTimestamp:   true,
 		ForceFormatting: true,
 	}
