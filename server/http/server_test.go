@@ -22,10 +22,8 @@ func TestStart(t *testing.T) {
 	logger.Main = logger.NewDummyLogger(buf)
 	logger.Access = logger.NewDummyLogger(buf)
 
-	// Start on any available port.
-	serverConfiguration := &config.HTTPServerConfiguration{
-		Port: 0,
-	}
+	cfg := config.NewAppConfiguration()
+	cfg.Server.HTTPServer.Port = 0
 
 	var controller server.Controller
 	controller = &DummyController{}
@@ -34,7 +32,7 @@ func TestStart(t *testing.T) {
 	instance.HTTP = append(instance.HTTP, controller)
 
 	srv := NewAppServer()
-	srv.Setup(serverConfiguration, instance)
+	srv.Setup(cfg, instance)
 	go srv.Run()
 
 	defer func() {

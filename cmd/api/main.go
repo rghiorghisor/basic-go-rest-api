@@ -34,7 +34,7 @@ func main() {
 
 	// Create and run the server.
 	appServer := http.NewAppServer()
-	appServer.Setup(appConfiguration.Server.HTTPServer, controllers)
+	appServer.Setup(appConfiguration, controllers)
 
 	if err := appServer.Run(); err != nil {
 		log.Fatalf("Failed to start: %+v", err)

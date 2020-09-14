@@ -122,6 +122,7 @@ type stats struct {
 // NewAppConfiguration creates a new application configuration instance.
 func NewAppConfiguration() *AppConfiguration {
 	new := NewDefault()
+	new.Environment = defaultEnvironment
 	new.stats = &stats{}
 
 	return new

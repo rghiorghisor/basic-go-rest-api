@@ -27,9 +27,15 @@ func NewAppServer() *AppServer {
 }
 
 // Setup prepares the server but does not starts it.
-func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfiguration, controllers *server.Controllers) {
+func (server *AppServer) Setup(config *config.AppConfiguration, controllers *server.Controllers) {
 	// Initialize the gin router.
-	router := gin.Default()
+	var router *gin.Engine
+	if config.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+		router = gin.New()
+	} else {
+		router = gin.Default()
+	}
 
 	router.Use(
 		AccessLogger(),
@@ -39,7 +45,7 @@ func (server *AppServer) Setup(serverConfiguration *config.HTTPServerConfigurati
 	)
 
 	setupEndpoints(controllers, router)
-	setupServer(server, router, serverConfiguration)
+	setupServer(server, router, config.Server.HTTPServer)
 }
 
 // Run starts the application server based on configuration settings.
