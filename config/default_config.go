@@ -39,7 +39,7 @@ func newDefaultMainLoggerConfiguration() *LoggerConfiguration {
 func newDefaultAccessLoggerConfiguration() *LoggerConfiguration {
 	return &LoggerConfiguration{
 		Format:      "text",
-		Level:       "error",
+		Level:       "info",
 		LogsDir:     "./logs",
 		FileName:    "access",
 		WithConsole: false,

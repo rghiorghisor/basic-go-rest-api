@@ -31,9 +31,10 @@ func newLogger(logger logger.Logger) gin.HandlerFunc {
 			dataLength = 0
 		}
 
-		msg1 := fmt.Sprintf("%3d | %13v | %-7s %#v %s",
+		msg1 := fmt.Sprintf("%3d | %13v | %8v | %-7s %#v %s",
 			statusCode,
 			latency,
+			dataLength,
 			c.Request.Method,
 			path,
 			c.Errors.ByType(gin.ErrorTypePrivate).String())
