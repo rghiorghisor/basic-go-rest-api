@@ -17,6 +17,9 @@ require (
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	go.etcd.io/bbolt v1.3.5 // indirect
 	go.mongodb.org/mongo-driver v1.4.0
+	go.uber.org/dig v1.10.0
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f // indirect
+	golang.org/x/tools v0.0.0-20200915031644-64986481280e // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1
 )

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
 	"github.com/rghiorghisor/basic-go-rest-api/property"
+	"github.com/rghiorghisor/basic-go-rest-api/server"
 )
 
 // Controller that handles the relation between the server and the service.
@@ -21,10 +22,12 @@ type PropertyDto struct {
 	Value       string `json:"value"`
 }
 
-// NewController retrieves a brand new contoller wrapping around the given service.
-func NewController(service property.Service) *Controller {
-	return &Controller{
-		service: service,
+// New retrieves a brand new contoller wrapping around the given service.
+func New(service property.Service) server.ControllerWrapper {
+	return server.ControllerWrapper{
+		Controller: &Controller{
+			service: service,
+		},
 	}
 }
 

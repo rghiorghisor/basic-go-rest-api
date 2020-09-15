@@ -15,19 +15,19 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/server"
 )
 
-// AppServer structure that encapsulates all related data.
-type AppServer struct {
+// Server structure that encapsulates all related data.
+type Server struct {
 	httpServer *http.Server
 	listener   net.Listener
 }
 
-// NewAppServer creates a new bare-boned application server.
-func NewAppServer() *AppServer {
-	return &AppServer{}
+// NewServer creates a new bare-boned application server.
+func NewServer() *Server {
+	return &Server{}
 }
 
 // Setup prepares the server but does not starts it.
-func (server *AppServer) Setup(config *config.AppConfiguration, controllers *server.Controllers) {
+func (server *Server) Setup(config *config.AppConfiguration, controllers *server.Controllers) {
 	// Initialize the gin router.
 	var router *gin.Engine
 	if config.IsProduction() {
@@ -49,7 +49,7 @@ func (server *AppServer) Setup(config *config.AppConfiguration, controllers *ser
 }
 
 // Run starts the application server based on configuration settings.
-func (server *AppServer) Run() error {
+func (server *Server) Run() error {
 	ch := make(chan error)
 	go func() {
 		listener, err := net.Listen("tcp", server.httpServer.Addr)
@@ -98,7 +98,7 @@ func setupEndpoints(controllers *server.Controllers, router *gin.Engine) {
 	}
 }
 
-func setupServer(server *AppServer, router *gin.Engine, serverConfiguration *config.HTTPServerConfiguration) {
+func setupServer(server *Server, router *gin.Engine, serverConfiguration *config.HTTPServerConfiguration) {
 	address := ":" + strconv.Itoa(serverConfiguration.Port)
 	readTimeout := time.Duration(serverConfiguration.ReadTimeout) * time.Second
 	writeTimeout := time.Duration(serverConfiguration.WriteTimeout) * time.Second

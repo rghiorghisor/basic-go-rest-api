@@ -326,7 +326,7 @@ func setup() (r *gin.Engine, serviceMock *PropertyServiceMock) {
 	api := router.Group("/api")
 
 	service := new(PropertyServiceMock)
-	controller := NewController(service)
+	controller := New(service).Controller
 	controller.Register(api)
 
 	return router, service

@@ -1,50 +1,52 @@
 package main
 
 import (
-	"log"
-
+	"github.com/rghiorghisor/basic-go-rest-api/appserver"
 	"github.com/rghiorghisor/basic-go-rest-api/config"
+	"github.com/rghiorghisor/basic-go-rest-api/container"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
-	"github.com/rghiorghisor/basic-go-rest-api/server"
+
+	property_controller "github.com/rghiorghisor/basic-go-rest-api/property/gateway/http"
+	property_service "github.com/rghiorghisor/basic-go-rest-api/property/service"
 	"github.com/rghiorghisor/basic-go-rest-api/server/http"
-	"github.com/rghiorghisor/basic-go-rest-api/server/storage"
+	server_storage "github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
 
 func main() {
-	// Load and validate configuration.
-	appConfiguration := config.NewAppConfiguration()
-	if err := appConfiguration.Load(); err != nil {
-		log.Fatalf("Cannot configure server: %s", err)
-	}
+	appServer := appserver.New()
+	appServer.LoadConfig()
 
-	// Setup and start the logger.
-	startLogger(appConfiguration)
+	setupStorage(appServer.Configuration, appServer.Container)
+	setupServices(appServer.Container)
+	setupControllers(appServer.Container)
+	setupServer(appServer.Container)
 
-	// Configure and connect to storage.
-	storage := storage.New()
-	if err := storage.SetupStorage(appConfiguration.Storage); err != nil {
-		logger.Main.Error("Cannot setup storage", err)
-	}
-
-	// Configure and setup services.
-	services := server.NewServices(storage)
-
-	// Gather the available controllers.
-	controllers := server.NewControllers(services)
-
-	// Create and run the server.
-	appServer := http.NewAppServer()
-	appServer.Setup(appConfiguration, controllers)
-
-	if err := appServer.Run(); err != nil {
-		log.Fatalf("Failed to start: %+v", err)
-	}
+	appServer.Start()
 }
 
-func startLogger(appConfiguration *config.AppConfiguration) {
-	logger.New(appConfiguration.Loggers)
+func setupStorage(appConfiguration *config.AppConfiguration, c *container.Container) {
+	c.Provide(func() (*server_storage.Storage, error) {
+		storage := server_storage.New()
+		if err := storage.SetupStorage(appConfiguration.Storage); err != nil {
+			logger.Main.Error("Cannot setup storage", err)
+		}
 
-	logger.Main.Info("Loaded configuration.")
-	logger.Main.Info(appConfiguration.Stats())
-	logger.Main.Infof("Starting application in %s mode...", appConfiguration.Environment.Name)
+		return storage, nil
+	})
+}
+
+func setupServer(c *container.Container) {
+	c.Provide(http.NewServer)
+}
+
+func setupServices(c *container.Container) {
+	c.Provide(property_service.New)
+
+	// Add here additional services...
+}
+
+func setupControllers(c *container.Container) {
+	c.Provide(property_controller.New)
+
+	// Add here additional controllers...
 }

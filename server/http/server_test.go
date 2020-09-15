@@ -22,6 +22,7 @@ func TestStart(t *testing.T) {
 	logger.Main = logger.NewDummyLogger(buf)
 	logger.Access = logger.NewDummyLogger(buf)
 
+	// Start on any available port.
 	cfg := config.NewAppConfiguration()
 	cfg.Server.HTTPServer.Port = 0
 
@@ -31,7 +32,7 @@ func TestStart(t *testing.T) {
 	instance := &server.Controllers{}
 	instance.HTTP = append(instance.HTTP, controller)
 
-	srv := NewAppServer()
+	srv := NewServer()
 	srv.Setup(cfg, instance)
 	go srv.Run()
 
@@ -122,7 +123,7 @@ func (ctrl *DummyController) Create(ctx *gin.Context) {
 	ctx.String(http.StatusCreated, "OK-test")
 }
 
-func ss(srv *AppServer) int {
+func ss(srv *Server) int {
 	for {
 		if srv != nil && srv.listener != nil && srv.listener.Addr() != nil {
 			return srv.listener.Addr().(*net.TCPAddr).Port

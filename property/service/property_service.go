@@ -6,6 +6,7 @@ import (
 
 	"github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
+	"github.com/rghiorghisor/basic-go-rest-api/property"
 	"github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage"
 	serverstorage "github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
@@ -19,8 +20,8 @@ type PropertyService struct {
 //
 // As this service needs access to a repository to perform action, it is the
 // responsibility of the service to get the correct repo from the storage parameter.
-func New(storage *serverstorage.Storage) *PropertyService {
-	return &PropertyService{
+func New(storage *serverstorage.Storage) property.Service {
+	return PropertyService{
 		repository: storage.PropertyRepository,
 	}
 }

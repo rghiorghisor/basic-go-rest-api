@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rghiorghisor/basic-go-rest-api/property/gateway/http"
+	"go.uber.org/dig"
 )
 
 // Controller defines the default functionality of a handler. It must be
@@ -16,11 +16,27 @@ type Controllers struct {
 	HTTP []Controller
 }
 
-// NewControllers creates a new collection of controllers based on the given services.
-func NewControllers(services *Services) *Controllers {
-	instance := &Controllers{}
+// NewControllersWithParams creates a new collection of controllers based on the given services.
+func NewControllersWithParams(cp ControllersParams) Controllers {
+	instance := Controllers{}
 
-	instance.HTTP = append(instance.HTTP, http.NewController(services.PropertyService))
+	for _, controller := range cp.Controllers {
+		instance.HTTP = append(instance.HTTP, controller)
+	}
 
 	return instance
+}
+
+// ControllerWrapper contains a Controller along and helps to initialize the Controllers.
+type ControllerWrapper struct {
+	dig.Out
+
+	Controller Controller `group:"controllers"`
+}
+
+// ControllersParams contains all managed controllers.
+type ControllersParams struct {
+	dig.In
+
+	Controllers []Controller `group:"controllers"`
 }
