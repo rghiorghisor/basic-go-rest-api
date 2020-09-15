@@ -1,5 +1,6 @@
 MODULE = $(shell go list -m)
 PACKAGES := $(shell go list ./...)
+GOLINT := $(shell go list -f {{.Target}} golang.org/x/lint/golint)
 
 clean:
 	rm -rf .bin cover.out cover-all.out
@@ -12,6 +13,9 @@ test:
 
 test-cover: test
 	go tool cover -html=cover-all.out
+
+lint:
+	@$(GOLINT) ./...
 
 build:
 	go mod download && \
