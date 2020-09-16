@@ -22,6 +22,16 @@ build:
 		go mod verify && \
 		CGO_ENABLED=0 GOOS=linux go build -o ./.bin/app cmd/api/main.go
 
+build-prod:
+	go mod download && \
+		go mod verify && \
+		CGO_ENABLED=0 GOOS=linux go build -tags prod -o ./.bin/app cmd/api/main.go	
+
+build-dev:
+	go mod download && \
+		go mod verify && \
+		CGO_ENABLED=0 GOOS=linux go build -tags dev -o ./.bin/app cmd/api/main.go	
+
 run-dev:
 	go run cmd/api/main.go
 

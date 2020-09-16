@@ -122,7 +122,10 @@ type stats struct {
 // NewAppConfiguration creates a new application configuration instance.
 func NewAppConfiguration() *AppConfiguration {
 	new := NewDefault()
+
+	defaultEnvironment = environments[DefaultEnvCode]
 	new.Environment = defaultEnvironment
+
 	new.stats = &stats{}
 
 	return new
@@ -166,6 +169,7 @@ func (appConfiguration *AppConfiguration) Load() error {
 	if environmentString != "" {
 		viper.Set("environment", environmentString)
 	}
+
 	appConfiguration.processEnvironment()
 
 	appConfiguration.stats.loaded = true

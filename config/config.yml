@@ -1,5 +1,3 @@
-environment: "dev"
-
 logger:
   main: 
     with-console: true
