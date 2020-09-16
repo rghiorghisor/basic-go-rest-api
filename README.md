@@ -1,9 +1,10 @@
 # Basic Go REST Api
 [![Build Status](https://github.com/rghiorghisor/basic-go-rest-api/workflows/build/badge.svg)](https://github.com/rghiorghisor/basic-go-rest-api/actions?query=workflow%3Abuild)
+[![Go Report](https://goreportcard.com/badge/github.com/rghiorghisor/basic-go-rest-api)](https://goreportcard.com/report/github.com/rghiorghisor/basic-go-rest-api)
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
-This application (boilerplate) is a take on developing a simple Go REST API, backed up by a MongoDb database, using principles of Hexagonal Architecture and SOLID principles.
+This application (boilerplate) is a take on developing a simple Go REST API, backed up by a MongoDb/Embedded Bolt database, using principles of Hexagonal Architecture and SOLID principles.
 
 **Note** that this is not work done, in any way. For an application to be production ready additional features must be implemented. Some will be added to this repository in the future, other will probably remain the developer's future duties.
 
@@ -58,9 +59,11 @@ go test ./...
 
 ```
 .
+├── appserver              Contains the main application controls implementation;
 ├── cmd                    Main applications of the project;
 │   └── api                The server application API (the entry point);
 ├── config                 Configuration logic and configuration files;
+├── container              Contains the DI container implementation;
 ├── errors                 Application errors and error logic;
 ├── logger                 Application logger and logic;
 ├── model                  Model (entities) definitions and logic;
@@ -168,13 +171,13 @@ In this way, by following the configuration file, one can have a better view ove
 In order to implement a new feature (usecase) usually the following steps must be achieved:
 
 1. Implement a new service (e.g `property/service/property_service.go`);
-2. Register the service and service creation (e.g `server/services.go`);
+2. Register the service and service creation (e.g `cmd/api/main.go`);
 3. Implement a new repository (e.g `property/gateway/storage/mongo/mongo_repository.go`);
-4. Register the repo and its creation (e.g `server/storage/storage.go`);
+4. Register the repo and its creation (e.g `cmd/api/main.go`);
 5. Implement controller (e.g `property/gateway/http/controller.go`);
-6. Register the service and service creation (e.g `server/controllers.go`).
+6. Register the service and service creation (e.g `cmd/api/main.go`).
 
-Even if the project provides a template for feature folder layout, the developer can decide what is the best setup for a particular case.
+Even if the project provides a template for feature folder layout, the developer can decide what is the best setup for a particular case. Of course, if the decision is that no services or repositories are required to be implemented, only a Controller must be retrieved.
 
 ## Contributing
 Pull requests are very welcome. For major changes, please open an issue first to discuss what you would like to change.
