@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -135,6 +136,39 @@ func TestReadAll(t *testing.T) {
 
 	// Test result.
 	assert.Equal(t, 200, w.Code)
+}
+
+func TestReadAllProperties(t *testing.T) {
+	router, service := setup()
+
+	// Mock service return.
+	properties := make([]*model.Property, 3)
+	for i := 0; i < 3; i++ {
+		properties[i] = &model.Property{
+			ID:          "Id" + strconv.Itoa(i),
+			Name:        "name.test" + strconv.Itoa(i),
+			Description: "Description test" + strconv.Itoa(i),
+			Value:       "Value test" + strconv.Itoa(i),
+		}
+	}
+
+	service.On("ReadAll").Return(properties, nil)
+
+	// Perform action.
+	headers := map[string]string{
+		"Accept": "application/java.properties",
+	}
+	w := performWithHeaders("GET", "/api/property", nil, router, headers)
+
+	// Test result.
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, ""+
+		"# Description test0\n"+
+		"name.test0 = Value test0\n\n"+
+		"# Description test1\n"+
+		"name.test1 = Value test1\n\n"+
+		"# Description test2\n"+
+		"name.test2 = Value test2\n", w.Body.String())
 }
 
 func TestReadAllUnexpected(t *testing.T) {
@@ -333,6 +367,10 @@ func setup() (r *gin.Engine, serviceMock *PropertyServiceMock) {
 }
 
 func perform(method string, uri string, body []byte, router *gin.Engine) (rr *httptest.ResponseRecorder) {
+	return performWithHeaders(method, uri, body, router, nil)
+}
+
+func performWithHeaders(method string, uri string, body []byte, router *gin.Engine, headers map[string]string) (rr *httptest.ResponseRecorder) {
 	w := httptest.NewRecorder()
 
 	var content bytes.Buffer
@@ -341,6 +379,12 @@ func perform(method string, uri string, body []byte, router *gin.Engine) (rr *ht
 	}
 
 	req, _ := http.NewRequest(method, uri, &content)
+	if headers != nil {
+		for key, value := range headers {
+
+			req.Header.Set(key, value)
+		}
+	}
 	router.ServeHTTP(w, req)
 
 	return w

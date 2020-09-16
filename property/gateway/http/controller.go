@@ -11,7 +11,8 @@ import (
 
 // Controller that handles the relation between the server and the service.
 type Controller struct {
-	service property.Service
+	formatters formatters
+	service    property.Service
 }
 
 // PropertyDto defines how a property must be exposed.
@@ -26,7 +27,8 @@ type PropertyDto struct {
 func New(service property.Service) server.ControllerWrapper {
 	return server.ControllerWrapper{
 		Controller: &Controller{
-			service: service,
+			formatters: newFormatters(),
+			service:    service,
 		},
 	}
 }
@@ -91,9 +93,11 @@ func (ctrl *Controller) ReadAll(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &readAllResponseDto{
-		PropertyDto: toProperties(properties),
-	})
+	ctrl.formatters.process(ctx, http.StatusOK, properties)
+
+	// ctx.JSON(http.StatusOK, &readAllResponseDto{
+	// 	PropertyDto: toProperties(properties),
+	// })
 }
 
 type updateDto struct {
