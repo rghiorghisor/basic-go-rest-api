@@ -24,10 +24,7 @@ func NewEntityNotFound(t reflect.Type, identifier string) error {
 	s := "Cannot find %s entity (id='%s')"
 	s = fmt.Sprintf(s, t, identifier)
 
-	return &Error{
-		Code:    404,
-		Message: s,
-	}
+	return &Error{404, s}
 }
 
 // NewConflict retrieves a new Error, signaling that an entity cannot be processed
@@ -36,8 +33,23 @@ func NewConflict(t reflect.Type, propName string, propValue string) error {
 	s := "Found %s with same unique property (%s='%s')"
 	s = fmt.Sprintf(s, t, propName, propValue)
 
-	return &Error{
-		Code:    409,
-		Message: s,
-	}
+	return &Error{409, s}
+}
+
+// NewInvalidEntityEmpty retrieves a new Error, signaling that a certain entity is
+// not valid due to one of its property being empty.
+func NewInvalidEntityEmpty(t reflect.Type, propName string) error {
+	s := "Invalid properties for %s entity. Property '%s' cannot be empty"
+	s = fmt.Sprintf(s, t, propName)
+
+	return &Error{400, s}
+}
+
+// NewInvalidEntityCustom retrieves a new Error, signaling that a certain entity is
+// not valid. The details of the invalid status must be found in the passed message
+func NewInvalidEntityCustom(t reflect.Type, message string) error {
+	s := "Invalid properties for %s entity. %s"
+	s = fmt.Sprintf(s, t, message)
+
+	return &Error{400, s}
 }

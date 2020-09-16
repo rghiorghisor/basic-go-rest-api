@@ -13,6 +13,7 @@ import (
 
 // PropertyService defines the service handling property operations.
 type PropertyService struct {
+	validators validators
 	repository storage.Repository
 }
 
@@ -22,12 +23,17 @@ type PropertyService struct {
 // responsibility of the service to get the correct repo from the storage parameter.
 func New(storage *serverstorage.Storage) property.Service {
 	return PropertyService{
+		validators: newValidators(),
 		repository: storage.PropertyRepository,
 	}
 }
 
 // Create processes a new property and adds it to the repository.
 func (service PropertyService) Create(ctx context.Context, prop *model.Property) error {
+	if err := service.validators.check(prop); err != nil {
+		return err
+	}
+
 	foundProp, _ := service.repository.FindByName(ctx, prop.Name)
 	if foundProp != nil {
 		return errors.NewConflict(reflect.TypeOf(foundProp), "name", prop.Name)
@@ -63,6 +69,10 @@ func (service PropertyService) Delete(ctx context.Context, id string) error {
 }
 
 // Update all fields of the given property.
-func (service PropertyService) Update(ctx context.Context, property *model.Property) error {
-	return service.repository.Update(ctx, property)
+func (service PropertyService) Update(ctx context.Context, prop *model.Property) error {
+	if err := service.validators.check(prop); err != nil {
+		return err
+	}
+
+	return service.repository.Update(ctx, prop)
 }

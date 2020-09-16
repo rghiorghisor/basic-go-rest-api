@@ -49,6 +49,44 @@ func TestCreateConflict(t *testing.T) {
 	assert.Equal(t, apperrors.NewConflict(reflect.TypeOf(found), "name", "TestName"), actualErr)
 }
 
+func TestCreateInvalidName(t *testing.T) {
+	srv, _ := setup()
+
+	toCreate := &model.Property{
+		Name:  "",
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	actualErr := srv.Create(ctx, toCreate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityEmpty(reflect.TypeOf(model.Property{}), "name"), actualErr)
+}
+
+func TestCreateInvalidNameMissing(t *testing.T) {
+	srv, _ := setup()
+
+	toCreate := &model.Property{
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	actualErr := srv.Create(ctx, toCreate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityEmpty(reflect.TypeOf(model.Property{}), "name"), actualErr)
+}
+
+func TestCreateInvalidNameSpace(t *testing.T) {
+	srv, _ := setup()
+
+	toCreate := &model.Property{
+		Name:  "Test Name",
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	actualErr := srv.Create(ctx, toCreate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityCustom(reflect.TypeOf(model.Property{}), "'name' cannot contain spaces."), actualErr)
+}
+
 func TestReadAll(t *testing.T) {
 	srv, repo := setup()
 
@@ -127,6 +165,44 @@ func TestUpdate(t *testing.T) {
 	err := srv.Update(ctx, toUpdate)
 
 	assert.Nil(t, err)
+}
+
+func TestUpdateInvalidName(t *testing.T) {
+	srv, _ := setup()
+
+	toUpdate := &model.Property{
+		Name:  "",
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	err := srv.Update(ctx, toUpdate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityEmpty(reflect.TypeOf(model.Property{}), "name"), err)
+}
+
+func TestUpdateInvalidNameMissing(t *testing.T) {
+	srv, _ := setup()
+
+	toUpdate := &model.Property{
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	err := srv.Update(ctx, toUpdate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityEmpty(reflect.TypeOf(model.Property{}), "name"), err)
+}
+
+func TestUpdateInvalidNameSpace(t *testing.T) {
+	srv, _ := setup()
+
+	toUpdate := &model.Property{
+		Name:  "Test Name",
+		Value: "TestValue"}
+
+	ctx := context.Background()
+	err := srv.Update(ctx, toUpdate)
+
+	assert.Equal(t, apperrors.NewInvalidEntityCustom(reflect.TypeOf(model.Property{}), "'name' cannot contain spaces."), err)
 }
 
 func TestDelete(t *testing.T) {
