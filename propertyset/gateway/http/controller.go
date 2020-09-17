@@ -5,41 +5,36 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
-	"github.com/rghiorghisor/basic-go-rest-api/property"
+	"github.com/rghiorghisor/basic-go-rest-api/propertyset"
 	"github.com/rghiorghisor/basic-go-rest-api/server"
 )
 
 // Controller that handles the relation between the server and the service.
 type Controller struct {
-	formatters formatters
-	service    property.Service
+	service propertyset.Service
 }
 
-// PropertyDto defines how a property must be exposed.
-type PropertyDto struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
+// PropertySetDto defines how a property set must be exposed.
+type PropertySetDto struct {
+	Name   string   `json:"name"`
+	Values []string `json:"values"`
 }
 
 // New retrieves a brand new contoller wrapping around the given service.
-func New(service property.Service) server.ControllerWrapper {
+func New(service propertyset.Service) server.ControllerWrapper {
 	return server.ControllerWrapper{
 		Controller: &Controller{
-			formatters: newFormatters(),
-			service:    service,
+			service: service,
 		},
 	}
 }
 
 type createDto struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
+	Name   string   `json:"name"`
+	Values []string `json:"values"`
 }
 
-// Create retrieves creates (if possible) a brand new property.
+// Create retrieves creates (if possible) a brand new property set.
 func (ctrl *Controller) Create(ctx *gin.Context) {
 	// Read input (must be JSON valid)
 	dto := new(createDto)
@@ -48,10 +43,9 @@ func (ctrl *Controller) Create(ctx *gin.Context) {
 		return
 	}
 
-	prop := &model.Property{
-		Name:        dto.Name,
-		Description: dto.Description,
-		Value:       dto.Value,
+	prop := &model.PropertySet{
+		Name:   dto.Name,
+		Values: dto.Values,
 	}
 
 	// Call service (business logic).
@@ -63,14 +57,15 @@ func (ctrl *Controller) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Writer.Header().Set("Location", ctx.Request.URL.Path+"/"+prop.ID)
+	ctx.Writer.Header().Set("Location", ctx.Request.URL.Path+"/"+prop.Name)
 	ctx.Status(http.StatusCreated)
 }
 
 type readAllResponseDto struct {
-	PropertyDto []*PropertyDto `json:"properties"`
+	PropertySetDto []*PropertySetDto `json:"sets"`
 }
 
+// Read reads a single property set based on the provided identifier.
 func (ctrl *Controller) Read(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -93,17 +88,16 @@ func (ctrl *Controller) ReadAll(ctx *gin.Context) {
 		return
 	}
 
-	ctrl.formatters.process(ctx, http.StatusOK, properties)
+	ctx.JSON(http.StatusOK, &readAllResponseDto{
+		PropertySetDto: toProperties(properties),
+	})
 }
 
 type updateDto struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
+	Values []string `json:"values"`
 }
 
-// Update a single property.
+// Update a single property set.
 func (ctrl *Controller) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -113,16 +107,12 @@ func (ctrl *Controller) Update(ctx *gin.Context) {
 		return
 	}
 
-	prop := &model.Property{
-		ID:          id,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Value:       inp.Value,
+	prop := &model.PropertySet{
+		Name:   id,
+		Values: inp.Values,
 	}
 
-	err := ctrl.service.Update(ctx.Request.Context(), prop)
-
-	if err != nil {
+	if err := ctrl.service.Update(ctx.Request.Context(), prop); err != nil {
 		ctx.Error(err)
 		return
 	}
@@ -130,13 +120,11 @@ func (ctrl *Controller) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, toProperty(prop))
 }
 
-// Delete a single property, specified by means of its identifier.
+// Delete a single property set, specified by means of its identifier.
 func (ctrl *Controller) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := ctrl.service.Delete(ctx.Request.Context(), id)
-
-	if err != nil {
+	if err := ctrl.service.Delete(ctx.Request.Context(), id); err != nil {
 		ctx.Error(err)
 		return
 	}
@@ -144,8 +132,8 @@ func (ctrl *Controller) Delete(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-func toProperties(bs []*model.Property) []*PropertyDto {
-	out := make([]*PropertyDto, len(bs))
+func toProperties(bs []*model.PropertySet) []*PropertySetDto {
+	out := make([]*PropertySetDto, len(bs))
 
 	for i, b := range bs {
 		out[i] = toProperty(b)
@@ -154,18 +142,16 @@ func toProperties(bs []*model.Property) []*PropertyDto {
 	return out
 }
 
-func toProperty(b *model.Property) *PropertyDto {
-	return &PropertyDto{
-		ID:          b.ID,
-		Name:        b.Name,
-		Description: b.Description,
-		Value:       b.Value,
+func toProperty(b *model.PropertySet) *PropertySetDto {
+	return &PropertySetDto{
+		Name:   b.Name,
+		Values: b.Values,
 	}
 }
 
 // Register this controller to the provided group.
 func (ctrl *Controller) Register(routerGroup *gin.RouterGroup) {
-	api := routerGroup.Group("/property")
+	api := routerGroup.Group("/set")
 
 	api.POST("", ctrl.Create)
 	api.GET("", ctrl.ReadAll)

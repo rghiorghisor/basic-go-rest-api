@@ -5,6 +5,7 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	property_bolt "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage/bolt"
+	propertyset_bolt "github.com/rghiorghisor/basic-go-rest-api/propertyset/gateway/storage/bolt"
 	"github.com/rghiorghisor/basic-go-rest-api/util"
 )
 
@@ -31,6 +32,7 @@ func (f *boltFactory) init(storage *Storage, config *config.StorageConfiguration
 
 	// Setup repositories.
 	storage.PropertyRepository = property_bolt.New(dbt)
+	storage.PropertySetRepository = propertyset_bolt.New(dbt)
 
 	// Add here any new repository...
 

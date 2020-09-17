@@ -8,6 +8,7 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	property_mongo "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage/mongo"
+	propertyset_mongo "github.com/rghiorghisor/basic-go-rest-api/propertyset/gateway/storage/mongo"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -32,6 +33,7 @@ func (f *mongoFactory) init(storage *Storage, config *config.StorageConfiguratio
 
 	// Setup repositories.
 	storage.PropertyRepository = property_mongo.New(db, mongoConfig.PropertiesCollectionName)
+	storage.PropertySetRepository = propertyset_mongo.New(db, "")
 
 	// Add here any new repository...
 

@@ -6,13 +6,15 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/config"
 	"github.com/rghiorghisor/basic-go-rest-api/logger"
 	property "github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage"
+	propertyset "github.com/rghiorghisor/basic-go-rest-api/propertyset/gateway/storage"
 )
 
 // Storage structure contains all repositories.
 type Storage struct {
-	factories          []func() factory
-	defaultFactory     func() factory
-	PropertyRepository property.Repository
+	factories             []func() factory
+	defaultFactory        func() factory
+	PropertyRepository    property.Repository
+	PropertySetRepository propertyset.Repository
 }
 
 type factory interface {

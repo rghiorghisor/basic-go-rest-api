@@ -8,6 +8,8 @@ import (
 
 	property_controller "github.com/rghiorghisor/basic-go-rest-api/property/gateway/http"
 	property_service "github.com/rghiorghisor/basic-go-rest-api/property/service"
+	propertyset_controller "github.com/rghiorghisor/basic-go-rest-api/propertyset/gateway/http"
+	propertyset_service "github.com/rghiorghisor/basic-go-rest-api/propertyset/service"
 	"github.com/rghiorghisor/basic-go-rest-api/server/http"
 	server_storage "github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
@@ -41,12 +43,14 @@ func setupServer(c *container.Container) {
 
 func setupServices(c *container.Container) {
 	c.Provide(property_service.New)
+	c.Provide(propertyset_service.New)
 
 	// Add here additional services...
 }
 
 func setupControllers(c *container.Container) {
 	c.Provide(property_controller.New)
+	c.Provide(propertyset_controller.New)
 
 	// Add here additional controllers...
 }
