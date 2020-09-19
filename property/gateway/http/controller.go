@@ -86,7 +86,8 @@ func (ctrl *Controller) Read(ctx *gin.Context) {
 
 // ReadAll retrieves a list of all available properties.
 func (ctrl *Controller) ReadAll(ctx *gin.Context) {
-	properties, err := ctrl.service.ReadAll(ctx.Request.Context())
+	query := parse(ctx)
+	properties, err := ctrl.service.ReadAll(ctx.Request.Context(), query)
 
 	if err != nil {
 		ctx.Error(err)

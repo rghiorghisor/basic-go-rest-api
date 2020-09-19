@@ -4,6 +4,8 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/asdine/storm/v3/q"
+
 	"github.com/asdine/storm/v3"
 	"github.com/google/uuid"
 	"github.com/rghiorghisor/basic-go-rest-api/errors"
@@ -52,6 +54,19 @@ func (repository PropertyRepository) Create(ctx context.Context, property *model
 func (repository PropertyRepository) ReadAll(ctx context.Context) ([]*model.Property, error) {
 	var properties []propertyDto
 	if err := repository.db.All(&properties); err != nil {
+		return nil, err
+	}
+
+	return convertDtosToModel(properties), nil
+}
+
+// ReadAllFiltered reads all available properties and filters them according to
+// the given names.
+func (repository PropertyRepository) ReadAllFiltered(ctx context.Context, names []string) ([]*model.Property, error) {
+	var properties []propertyDto
+	query := repository.db.Select(q.In("Name", names))
+
+	if err := query.Find(&properties); err != nil {
 		return nil, err
 	}
 

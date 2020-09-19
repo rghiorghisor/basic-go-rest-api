@@ -12,6 +12,8 @@ type Repository interface {
 
 	ReadAll(ctx context.Context) ([]*model.Property, error)
 
+	ReadAllFiltered(ctx context.Context, names []string) ([]*model.Property, error)
+
 	FindByID(context context.Context, id string) (*model.Property, error)
 
 	FindByName(context context.Context, name string) (*model.Property, error)

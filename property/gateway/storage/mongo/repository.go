@@ -75,6 +75,31 @@ func (repository PropertyRepository) ReadAll(ctx context.Context) ([]*model.Prop
 	return convertDtosToModel(result), nil
 }
 
+// ReadAllFiltered reads all available properties and filters them according to
+// the given names.
+func (repository PropertyRepository) ReadAllFiltered(ctx context.Context, names []string) ([]*model.Property, error) {
+	cursor, error := repository.dbCollection.Find(ctx, bson.M{"name": bson.M{"$in": names}})
+	defer cursor.Close(ctx)
+
+	if error != nil {
+		return nil, error
+	}
+
+	result := make([]*propertyDto, 0)
+
+	for cursor.Next(ctx) {
+		dto := new(propertyDto)
+		err := cursor.Decode(dto)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, dto)
+	}
+
+	return convertDtosToModel(result), nil
+}
+
 // FindByID retrieves the property matching the given id if such a property
 // exists; otherwise will return a not found error.
 func (repository PropertyRepository) FindByID(context context.Context, id string) (*model.Property, error) {

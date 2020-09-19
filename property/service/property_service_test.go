@@ -9,6 +9,7 @@ import (
 	apperrors "github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
 	"github.com/rghiorghisor/basic-go-rest-api/property"
+	set_service "github.com/rghiorghisor/basic-go-rest-api/propertyset/service"
 	"github.com/rghiorghisor/basic-go-rest-api/server/storage"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -102,7 +103,7 @@ func TestReadAll(t *testing.T) {
 	repo.On("ReadAll").Return(properties, nil)
 
 	ctx := context.Background()
-	actual, err := srv.ReadAll(ctx)
+	actual, err := srv.ReadAll(ctx, property.Query{})
 
 	assert.Nil(t, err)
 	assert.Equal(t, properties, actual)
@@ -221,7 +222,10 @@ func TestDelete(t *testing.T) {
 func setup() (service property.Service, repo *PropertyRepositoryMock) {
 	repoMock := new(PropertyRepositoryMock)
 	storage := &storage.Storage{PropertyRepository: repoMock}
-	service = New(storage)
+
+	setService := new(set_service.PropertySetServiceMock)
+
+	service = New(storage, setService)
 
 	return service, repoMock
 }
@@ -238,6 +242,12 @@ func (m PropertyRepositoryMock) Create(ctx context.Context, property *model.Prop
 
 func (m PropertyRepositoryMock) ReadAll(ctx context.Context) ([]*model.Property, error) {
 	args := m.Called()
+
+	return args.Get(0).([]*model.Property), args.Error(1)
+}
+
+func (m PropertyRepositoryMock) ReadAllFiltered(ctx context.Context, names []string) ([]*model.Property, error) {
+	args := m.Called(names)
 
 	return args.Get(0).([]*model.Property), args.Error(1)
 }

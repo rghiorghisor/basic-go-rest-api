@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	apperrors "github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
+	"github.com/rghiorghisor/basic-go-rest-api/property"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -122,14 +123,11 @@ func TestReadAll(t *testing.T) {
 	// Mock service return.
 	properties := make([]*model.Property, 3)
 	for i := 0; i < 3; i++ {
-		properties[i] = &model.Property{
-			ID:          "Id",
-			Name:        "Name test",
-			Description: "Description test",
-			Value:       "Value test"}
+		is := strconv.Itoa(i)
+		properties[i] = &model.Property{ID: "Id" + is, Name: "Name test " + is, Description: "Description test " + is, Value: is}
 	}
 
-	service.On("ReadAll").Return(properties, nil)
+	service.On("ReadAll", property.EmptyQuery).Return(properties, nil)
 
 	// Perform action.
 	w := perform("GET", "/api/property", nil, router)
@@ -144,15 +142,11 @@ func TestReadAllProperties(t *testing.T) {
 	// Mock service return.
 	properties := make([]*model.Property, 3)
 	for i := 0; i < 3; i++ {
-		properties[i] = &model.Property{
-			ID:          "Id" + strconv.Itoa(i),
-			Name:        "name.test" + strconv.Itoa(i),
-			Description: "Description test" + strconv.Itoa(i),
-			Value:       "Value test" + strconv.Itoa(i),
-		}
+		is := strconv.Itoa(i)
+		properties[i] = &model.Property{ID: "Id" + is, Name: "name.test" + is, Description: "Description test" + is, Value: "Value test" + is}
 	}
 
-	service.On("ReadAll").Return(properties, nil)
+	service.On("ReadAll", property.EmptyQuery).Return(properties, nil)
 
 	// Perform action.
 	headers := map[string]string{
@@ -360,6 +354,7 @@ func setup() (r *gin.Engine, serviceMock *PropertyServiceMock) {
 	api := router.Group("/api")
 
 	service := new(PropertyServiceMock)
+	//setService := new(set_service.PropertySetServiceMock)
 	controller := New(service).Controller
 	controller.Register(api)
 
@@ -400,8 +395,8 @@ func (m *PropertyServiceMock) Create(ctx context.Context, property *model.Proper
 	return args.Error(0)
 }
 
-func (m *PropertyServiceMock) ReadAll(ctx context.Context) ([]*model.Property, error) {
-	args := m.Called()
+func (m *PropertyServiceMock) ReadAll(ctx context.Context, q property.Query) ([]*model.Property, error) {
+	args := m.Called(q)
 
 	return args.Get(0).([]*model.Property), args.Error(1)
 }

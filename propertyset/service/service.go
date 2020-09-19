@@ -52,6 +52,17 @@ func (service PropertySetService) FindByID(ctx context.Context, id string) (*mod
 	return foundProp, nil
 }
 
+// FindValuesByID retrieves all values associated with the set identified by the
+// given parameter.
+func (service PropertySetService) FindValuesByID(ctx context.Context, id string) ([]string, error) {
+	foundSet, err := service.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return foundSet.Values, nil
+}
+
 // Delete the property set with the given id.
 func (service PropertySetService) Delete(ctx context.Context, id string) error {
 	return service.repository.Delete(ctx, id)

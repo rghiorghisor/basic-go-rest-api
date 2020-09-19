@@ -10,7 +10,7 @@ import (
 type Service interface {
 	Create(ctx context.Context, property *model.Property) error
 
-	ReadAll(ctx context.Context) ([]*model.Property, error)
+	ReadAll(ctx context.Context, query Query) ([]*model.Property, error)
 
 	FindByID(ctx context.Context, id string) (*model.Property, error)
 

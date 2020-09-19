@@ -8,6 +8,7 @@ import (
 	"github.com/rghiorghisor/basic-go-rest-api/model"
 	"github.com/rghiorghisor/basic-go-rest-api/property"
 	"github.com/rghiorghisor/basic-go-rest-api/property/gateway/storage"
+	"github.com/rghiorghisor/basic-go-rest-api/propertyset"
 	serverstorage "github.com/rghiorghisor/basic-go-rest-api/server/storage"
 )
 
@@ -15,16 +16,19 @@ import (
 type PropertyService struct {
 	validators validators
 	repository storage.Repository
+
+	setService propertyset.Service
 }
 
 // New creates a PropertyService.
 //
 // As this service needs access to a repository to perform action, it is the
 // responsibility of the service to get the correct repo from the storage parameter.
-func New(storage *serverstorage.Storage) property.Service {
+func New(storage *serverstorage.Storage, setService propertyset.Service) property.Service {
 	return PropertyService{
 		validators: newValidators(),
 		repository: storage.PropertyRepository,
+		setService: setService,
 	}
 }
 
@@ -42,8 +46,23 @@ func (service PropertyService) Create(ctx context.Context, prop *model.Property)
 	return service.repository.Create(ctx, prop)
 }
 
-// ReadAll retrieves all available properties.
-func (service PropertyService) ReadAll(ctx context.Context) ([]*model.Property, error) {
+// ReadAll retrieves all available properties, based on the provided query.
+//
+// The Query.Set defines the set of properties to be used. In case such a set
+// is defined, the names from the set will be used to filter the results;
+// otherwise, all properties are retrieved.
+func (service PropertyService) ReadAll(ctx context.Context, query property.Query) ([]*model.Property, error) {
+	var filterValues []string
+	var err error
+	if query.HasSet() {
+		filterValues, err = service.setService.FindValuesByID(ctx, query.GetSet())
+		if err != nil {
+			return nil, err
+		}
+
+		return service.repository.ReadAllFiltered(ctx, filterValues)
+	}
+
 	return service.repository.ReadAll(ctx)
 }
 

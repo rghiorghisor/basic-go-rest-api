@@ -14,6 +14,8 @@ type Service interface {
 
 	FindByID(ctx context.Context, id string) (*model.PropertySet, error)
 
+	FindValuesByID(ctx context.Context, id string) ([]string, error)
+
 	Delete(ctx context.Context, id string) error
 
 	Update(ctx context.Context, property *model.PropertySet) error

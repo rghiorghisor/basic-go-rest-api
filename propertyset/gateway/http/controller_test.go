@@ -2,7 +2,6 @@ package http
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -14,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 	apperrors "github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
+	"github.com/rghiorghisor/basic-go-rest-api/propertyset/service"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestCreate(t *testing.T) {
@@ -260,14 +259,14 @@ func TestDeleteUnexpected(t *testing.T) {
 	assert.Equal(t, 500, w.Code)
 }
 
-func setup() (r *gin.Engine, serviceMock *PropertyServiceMock) {
+func setup() (r *gin.Engine, serviceMock *service.PropertySetServiceMock) {
 	router := gin.Default()
 	router.Use(
 		jsonAppErrorHandler(),
 	)
 	api := router.Group("/api")
 
-	service := new(PropertyServiceMock)
+	service := new(service.PropertySetServiceMock)
 	controller := New(service).Controller
 	controller.Register(api)
 
@@ -296,40 +295,6 @@ func performWithHeaders(method string, uri string, body []byte, router *gin.Engi
 	router.ServeHTTP(w, req)
 
 	return w
-}
-
-type PropertyServiceMock struct {
-	mock.Mock
-}
-
-func (m *PropertyServiceMock) Create(ctx context.Context, property *model.PropertySet) error {
-	args := m.Called(property)
-
-	return args.Error(0)
-}
-
-func (m *PropertyServiceMock) ReadAll(ctx context.Context) ([]*model.PropertySet, error) {
-	args := m.Called()
-
-	return args.Get(0).([]*model.PropertySet), args.Error(1)
-}
-
-func (m *PropertyServiceMock) FindByID(ctx context.Context, id string) (*model.PropertySet, error) {
-	args := m.Called(id)
-
-	return args.Get(0).(*model.PropertySet), args.Error(1)
-}
-
-func (m *PropertyServiceMock) Delete(ctx context.Context, id string) error {
-	args := m.Called(id)
-
-	return args.Error(0)
-}
-
-func (m *PropertyServiceMock) Update(ctx context.Context, property *model.PropertySet) error {
-	args := m.Called(property)
-
-	return args.Error(0)
 }
 
 func jsonAppErrorHandler() gin.HandlerFunc {
