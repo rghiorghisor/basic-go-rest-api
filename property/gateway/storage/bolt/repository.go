@@ -2,7 +2,6 @@ package bolt
 
 import (
 	"context"
-	"reflect"
 
 	"github.com/asdine/storm/v3/q"
 
@@ -80,7 +79,7 @@ func (repository PropertyRepository) FindByID(context context.Context, id string
 	err := repository.db.One("ID", id, &dto)
 
 	if storm.ErrNotFound == err {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf((*model.Property)(nil)).Elem(), id)
+		return nil, errors.NewEntityNotFound(model.Property{}, id)
 	}
 
 	if err != nil {
@@ -97,7 +96,7 @@ func (repository PropertyRepository) FindByName(context context.Context, name st
 	err := repository.db.One("Name", name, &dto)
 
 	if storm.ErrNotFound == err {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf((*model.Property)(nil)).Elem(), name)
+		return nil, errors.NewEntityNotFound(model.Property{}, name)
 	}
 
 	if err != nil {
@@ -113,7 +112,7 @@ func (repository PropertyRepository) Delete(context context.Context, id string) 
 	err := repository.db.One("ID", id, &dto)
 
 	if storm.ErrNotFound == err {
-		return errors.NewEntityNotFound(reflect.TypeOf((*model.Property)(nil)).Elem(), id)
+		return errors.NewEntityNotFound(model.Property{}, id)
 	}
 
 	if err != nil {
@@ -133,7 +132,7 @@ func (repository PropertyRepository) Update(ctx context.Context, property *model
 	err := repository.db.Update(dto)
 
 	if storm.ErrNotFound == err {
-		return errors.NewEntityNotFound(reflect.TypeOf((*model.Property)(nil)).Elem(), property.ID)
+		return errors.NewEntityNotFound(model.Property{}, property.ID)
 	}
 
 	if err != nil {

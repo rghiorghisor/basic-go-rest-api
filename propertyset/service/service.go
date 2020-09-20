@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"reflect"
 
 	"github.com/rghiorghisor/basic-go-rest-api/errors"
 	"github.com/rghiorghisor/basic-go-rest-api/model"
@@ -46,7 +45,7 @@ func (service PropertySetService) FindByID(ctx context.Context, id string) (*mod
 	}
 
 	if foundProp == nil {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf(foundProp), id)
+		return nil, errors.NewEntityNotFound(foundProp, id)
 	}
 
 	return foundProp, nil

@@ -4,7 +4,6 @@ import (
 	"context"
 	g_errors "errors"
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/asdine/storm/v3"
@@ -99,7 +98,7 @@ func TestFindByIdNotFound(t *testing.T) {
 	id := "test.notfound.id"
 	_, err := repo.FindByID(context.Background(), id)
 
-	assert.Equal(t, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), id), err)
+	assert.Equal(t, errors.NewEntityNotFound(model.PropertySet{}, id), err)
 }
 
 func TestFindByIdUnexpected(t *testing.T) {
@@ -147,7 +146,7 @@ func TestFindByNameNotFound(t *testing.T) {
 	name := "test.notfound.name"
 	_, err := repo.FindByName(context.Background(), name)
 
-	assert.Equal(t, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), name), err)
+	assert.Equal(t, errors.NewEntityNotFound(model.PropertySet{}, name), err)
 }
 
 func TestFindByNameUnexpected(t *testing.T) {
@@ -179,7 +178,7 @@ func TestDelete(t *testing.T) {
 	id := readProps[0].Name
 	_, err := repo.FindByID(context.Background(), id)
 
-	assert.Equal(t, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), id), err)
+	assert.Equal(t, errors.NewEntityNotFound(model.PropertySet{}, id), err)
 }
 
 func TestDeleteNotFound(t *testing.T) {
@@ -188,7 +187,7 @@ func TestDeleteNotFound(t *testing.T) {
 
 	id := "test.notfound.id"
 	err := repo.Delete(context.Background(), id)
-	assert.Equal(t, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), id), err)
+	assert.Equal(t, errors.NewEntityNotFound(model.PropertySet{}, id), err)
 }
 
 func TestDeleteUnexpectedFind(t *testing.T) {
@@ -243,7 +242,7 @@ func TestUpdateNotFound(t *testing.T) {
 
 	repo.Delete(context.Background(), prop1.Name)
 	err := repo.Update(context.Background(), prop1)
-	assert.Equal(t, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), prop1.Name), err)
+	assert.Equal(t, errors.NewEntityNotFound(model.PropertySet{}, prop1.Name), err)
 }
 
 func TestUpdateUnExpected(t *testing.T) {

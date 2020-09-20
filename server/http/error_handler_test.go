@@ -2,7 +2,6 @@ package http
 
 import (
 	eerrors "errors"
-	"reflect"
 	"testing"
 
 	nhttp "net/http"
@@ -17,7 +16,7 @@ import (
 
 func TestHandle404(t *testing.T) {
 
-	err := errors.NewEntityNotFound(reflect.TypeOf(&TestStruct{}), "1")
+	err := errors.NewEntityNotFound(TestStruct{}, "1")
 	router, mock := setup(err)
 
 	mock.On("Operation").Return(err)

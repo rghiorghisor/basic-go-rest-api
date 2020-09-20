@@ -75,7 +75,7 @@ func (repository PropertySetRepository) FindByID(context context.Context, id str
 	err := repository.db.One("Name", id, &dto)
 
 	if storm.ErrNotFound == err {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), id)
+		return nil, errors.NewEntityNotFound(model.PropertySet{}, id)
 	}
 
 	if err != nil {
@@ -92,7 +92,7 @@ func (repository PropertySetRepository) FindByName(context context.Context, name
 	err := repository.db.One("Name", name, &dto)
 
 	if storm.ErrNotFound == err {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), name)
+		return nil, errors.NewEntityNotFound(model.PropertySet{}, name)
 	}
 
 	if err != nil {
@@ -108,7 +108,7 @@ func (repository PropertySetRepository) Delete(context context.Context, id strin
 	err := repository.db.One("Name", id, &dto)
 
 	if storm.ErrNotFound == err {
-		return errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), id)
+		return errors.NewEntityNotFound(model.PropertySet{}, id)
 	}
 
 	if err != nil {
@@ -128,7 +128,7 @@ func (repository PropertySetRepository) Update(ctx context.Context, property *mo
 	err := repository.db.Update(dto)
 
 	if storm.ErrNotFound == err {
-		return errors.NewEntityNotFound(reflect.TypeOf((*model.PropertySet)(nil)).Elem(), property.Name)
+		return errors.NewEntityNotFound(model.PropertySet{}, property.Name)
 	}
 
 	if err != nil {

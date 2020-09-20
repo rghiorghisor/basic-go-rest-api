@@ -76,7 +76,7 @@ func (service PropertyService) FindByID(ctx context.Context, id string) (*model.
 	}
 
 	if foundProp == nil {
-		return nil, errors.NewEntityNotFound(reflect.TypeOf(foundProp), id)
+		return nil, errors.NewEntityNotFound(model.Property{}, id)
 	}
 
 	return foundProp, nil

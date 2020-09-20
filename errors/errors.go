@@ -20,7 +20,8 @@ func (e *Error) Error() string {
 
 // NewEntityNotFound retrieves a new Error, signaling that a certain entity is
 // not available.
-func NewEntityNotFound(t reflect.Type, identifier string) error {
+func NewEntityNotFound(entity interface{}, identifier string) error {
+	t := reflect.TypeOf(entity)
 	s := "Cannot find %s entity (id='%s')"
 	s = fmt.Sprintf(s, t, identifier)
 
@@ -29,7 +30,8 @@ func NewEntityNotFound(t reflect.Type, identifier string) error {
 
 // NewConflict retrieves a new Error, signaling that an entity cannot be processed
 // because there was found another such entity.
-func NewConflict(t reflect.Type, propName string, propValue string) error {
+func NewConflict(entity interface{}, propName string, propValue string) error {
+	t := reflect.TypeOf(entity)
 	s := "Found %s with same unique property (%s='%s')"
 	s = fmt.Sprintf(s, t, propName, propValue)
 
@@ -38,7 +40,8 @@ func NewConflict(t reflect.Type, propName string, propValue string) error {
 
 // NewInvalidEntityEmpty retrieves a new Error, signaling that a certain entity is
 // not valid due to one of its property being empty.
-func NewInvalidEntityEmpty(t reflect.Type, propName string) error {
+func NewInvalidEntityEmpty(entity interface{}, propName string) error {
+	t := reflect.TypeOf(entity)
 	s := "Invalid properties for %s entity. Property '%s' cannot be empty"
 	s = fmt.Sprintf(s, t, propName)
 
@@ -47,7 +50,8 @@ func NewInvalidEntityEmpty(t reflect.Type, propName string) error {
 
 // NewInvalidEntityCustom retrieves a new Error, signaling that a certain entity is
 // not valid. The details of the invalid status must be found in the passed message
-func NewInvalidEntityCustom(t reflect.Type, message string) error {
+func NewInvalidEntityCustom(entity interface{}, message string) error {
+	t := reflect.TypeOf(entity)
 	s := "Invalid properties for %s entity. %s"
 	s = fmt.Sprintf(s, t, message)
 

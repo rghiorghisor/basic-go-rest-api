@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,7 +9,7 @@ import (
 )
 
 func TestEntityNotFound(t *testing.T) {
-	err := NewEntityNotFound(reflect.TypeOf(model.Property{}), "123")
+	err := NewEntityNotFound(model.Property{}, "123")
 	actual := err.(*Error)
 	assert.Equal(t, 404, actual.Code)
 	assert.Equal(t, "Cannot find model.Property entity (id='123')", actual.Message)
@@ -18,7 +17,7 @@ func TestEntityNotFound(t *testing.T) {
 }
 
 func TestConflict(t *testing.T) {
-	err := NewConflict(reflect.TypeOf(model.Property{}), "name", "TestName")
+	err := NewConflict(model.Property{}, "name", "TestName")
 	actual := err.(*Error)
 	assert.Equal(t, 409, actual.Code)
 	assert.Equal(t, "Found model.Property with same unique property (name='TestName')", actual.Message)
@@ -26,7 +25,7 @@ func TestConflict(t *testing.T) {
 }
 
 func TestInvalidEntityEmpty(t *testing.T) {
-	err := NewInvalidEntityEmpty(reflect.TypeOf(model.Property{}), "name")
+	err := NewInvalidEntityEmpty(model.Property{}, "name")
 	actual := err.(*Error)
 	assert.Equal(t, 400, actual.Code)
 	assert.Equal(t, "Invalid properties for model.Property entity. Property 'name' cannot be empty", actual.Message)
@@ -34,7 +33,7 @@ func TestInvalidEntityEmpty(t *testing.T) {
 }
 
 func TestInvalidEntityCustom(t *testing.T) {
-	err := NewInvalidEntityCustom(reflect.TypeOf(model.Property{}), "test message")
+	err := NewInvalidEntityCustom(model.Property{}, "test message")
 	actual := err.(*Error)
 	assert.Equal(t, 400, actual.Code)
 	assert.Equal(t, "Invalid properties for model.Property entity. test message", actual.Message)

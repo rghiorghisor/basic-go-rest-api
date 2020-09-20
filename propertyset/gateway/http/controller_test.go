@@ -144,7 +144,7 @@ func TestReadNotFound(t *testing.T) {
 	router, service := setup()
 
 	// Mock service return.
-	service.On("FindByID", "test.name.1").Return(&model.PropertySet{}, apperrors.NewEntityNotFound(reflect.TypeOf(&model.PropertySet{}), "test.name.1"))
+	service.On("FindByID", "test.name.1").Return(&model.PropertySet{}, apperrors.NewEntityNotFound(model.PropertySet{}, "test.name.1"))
 
 	// Perform action.
 	w := perform("GET", "/api/set/test.name.1", nil, router)
@@ -237,7 +237,7 @@ func TestDeleteNotFound(t *testing.T) {
 	router, service := setup()
 
 	// Mock service action.
-	service.On("Delete", "TestId").Return(apperrors.NewEntityNotFound(reflect.TypeOf(&model.Property{}), "TestId"))
+	service.On("Delete", "TestId").Return(apperrors.NewEntityNotFound(&model.Property{}, "TestId"))
 
 	// Perform action.
 	w := perform("DELETE", "/api/set/TestId", nil, router)

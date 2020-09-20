@@ -112,7 +112,7 @@ func (repository PropertyRepository) FindByID(context context.Context, id string
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.NewEntityNotFound(reflect.TypeOf((*model.Property)(nil)).Elem(), id)
+			return nil, errors.NewEntityNotFound(model.Property{}, id)
 		}
 
 		return nil, err

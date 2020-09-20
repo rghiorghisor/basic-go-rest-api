@@ -136,7 +136,7 @@ func TestFindByIDNotFound(t *testing.T) {
 	actual, err := srv.FindByID(ctx, notFoundID)
 
 	assert.Nil(t, actual)
-	assert.Equal(t, apperrors.NewEntityNotFound(reflect.TypeOf(actual), "testid"), err)
+	assert.Equal(t, apperrors.NewEntityNotFound(model.Property{}, "testid"), err)
 }
 
 func TestFindByIDUnexpected(t *testing.T) {
