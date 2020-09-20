@@ -31,12 +31,13 @@ func newLogger(logger logger.Logger) gin.HandlerFunc {
 			dataLength = 0
 		}
 
+		// Remove the last character if it is a CRLF.
 		errString := c.Errors.ByType(gin.ErrorTypePrivate).String()
 		if errString != "" && errString[len(errString)-1:] == "\n" {
 			errString = errString[0 : len(errString)-1]
 		}
 
-		msg1 := fmt.Sprintf("%3d | %13v | %8v | %-7s %#v %s",
+		messageToLog := fmt.Sprintf("%3d | %13v | %8v | %-7s %#v %s",
 			statusCode,
 			latency,
 			dataLength,
@@ -45,11 +46,11 @@ func newLogger(logger logger.Logger) gin.HandlerFunc {
 			errString)
 
 		if statusCode >= http.StatusInternalServerError {
-			logger.Errore(msg1)
+			logger.Errore(messageToLog)
 		} else if statusCode >= http.StatusBadRequest {
-			logger.Warn(msg1)
+			logger.Warn(messageToLog)
 		} else {
-			logger.Info(msg1)
+			logger.Info(messageToLog)
 		}
 	}
 }

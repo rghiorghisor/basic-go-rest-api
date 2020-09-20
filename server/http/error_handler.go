@@ -24,30 +24,33 @@ func JSONAppErrorHandler() gin.HandlerFunc {
 func handle(errType gin.ErrorType) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
-		detectedErrors := c.Errors
+		rawErrors := c.Errors
 
-		if len(detectedErrors) > 0 {
-			err := detectedErrors[0].Err
-			var parsedError *appError
-
-			switch err.(type) {
-			case *errors.Error:
-				oError := err.(*errors.Error)
-				parsedError = &appError{
-					Code:    oError.Code,
-					Message: oError.Message,
-				}
-			default:
-				parsedError = &appError{
-					Code:    http.StatusInternalServerError,
-					Message: "Internal Server Error",
-				}
-			}
-
-			parsedError.Timestamp = time.Now()
-			c.AbortWithStatusJSON(parsedError.Code, parsedError)
-
+		if len(rawErrors) <= 0 {
 			return
 		}
+
+		err := rawErrors[0].Err
+		var parsedError *appError
+
+		switch err.(type) {
+		case *errors.Error:
+			castError := err.(*errors.Error)
+			parsedError = &appError{
+				Code:    castError.Code,
+				Message: castError.Message,
+			}
+		default:
+			parsedError = &appError{
+				Code:    http.StatusInternalServerError,
+				Message: "Internal Server Error",
+			}
+		}
+
+		parsedError.Timestamp = time.Now()
+		c.AbortWithStatusJSON(parsedError.Code, parsedError)
+
+		return
+
 	}
 }
