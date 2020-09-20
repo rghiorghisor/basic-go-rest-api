@@ -48,6 +48,7 @@ func NewLogger(lgrDefinition *Definition, w io.Writer) *Logger {
 		newLogger.Out = w
 	}
 
+	newLogger.Out.Write([]byte("\n"))
 	lgr := &Logger{
 		Logger: newLogger,
 		prefix: lgrDefinition.prefix,
@@ -87,44 +88,45 @@ func NewDummyLogger(w io.Writer) *Logger {
 
 // Info logs the given message, along with the prefix field.
 func (lgr *Logger) Info(message string) {
-	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": lgr.prefix,
-	}).Info(message)
+	lgr.withFields().
+		Info(message)
 }
 
 // Infof formats the give string along with the parameters and logs it as an INFO message,
 // along with the along with the prefix field.
 func (lgr *Logger) Infof(format string, args ...interface{}) {
-	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": lgr.prefix,
-	}).Infof(format, args...)
+	lgr.withFields().
+		Infof(format, args...)
 }
 
 // Warn logs the given message as an warning.
 func (lgr *Logger) Warn(message string) {
-	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": lgr.prefix,
-	}).Warn(message)
+	lgr.withFields().
+		Warn(message)
 }
 
 // Errore logs the given message as an error, along with the prefix field.
 func (lgr *Logger) Errore(message string) {
-	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": lgr.prefix,
-	}).Error(message)
+	lgr.withFields().
+		Error(message)
 }
 
 // Error logs the given message as an error, along with the prefix field.
 func (lgr *Logger) Error(message string, err error) {
-	lgr.Logger.WithFields(logrus.Fields{
-		"prefix": lgr.prefix,
-	}).WithError(err).Error(message)
+	lgr.withFields().
+		WithError(err).
+		Error(message)
 }
 
 // Debugf formats the give string along with the parameters and logs it as a DEBUG message,
 // along with the along with the prefix field.
 func (lgr *Logger) Debugf(format string, args ...interface{}) {
-	lgr.Logger.WithFields(logrus.Fields{
+	lgr.withFields().
+		Debugf(format, args...)
+}
+
+func (lgr *Logger) withFields() *logrus.Entry {
+	return lgr.Logger.WithFields(logrus.Fields{
 		"prefix": lgr.prefix,
-	}).Debugf(format, args...)
+	})
 }

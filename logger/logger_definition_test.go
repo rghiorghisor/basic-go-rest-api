@@ -16,7 +16,7 @@ func TestNewDefinitionTextFormat(t *testing.T) {
 	fmtr := definition.formatter
 	assert.NotEqual(t, fmtr.(*prefixed.TextFormatter), nil)
 
-	// Test case sensivity.
+	// Test case.
 	conf.Format = "tExT"
 	definition = NewDefinition(conf)
 	fmtr = definition.formatter
@@ -31,7 +31,7 @@ func TestNewDefinitionJSONFormat(t *testing.T) {
 	fmtr := definition.formatter
 	assert.NotEqual(t, fmtr.(*logrus.JSONFormatter), nil)
 
-	// Test case sensivity.
+	// Test case.
 	conf.Format = "jSOn"
 	definition = NewDefinition(conf)
 	fmtr = definition.formatter
