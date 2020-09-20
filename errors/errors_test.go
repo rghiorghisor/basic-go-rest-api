@@ -28,14 +28,14 @@ func TestInvalidEntityEmpty(t *testing.T) {
 	err := NewInvalidEntityEmpty(model.Property{}, "name")
 	actual := err.(*Error)
 	assert.Equal(t, 400, actual.Code)
-	assert.Equal(t, "Invalid properties for model.Property entity. Property 'name' cannot be empty", actual.Message)
-	assert.Equal(t, "[code=400][Invalid properties for model.Property entity. Property 'name' cannot be empty]", actual.Error())
+	assert.Equal(t, "Invalid model.Property entity. Property 'name' cannot be empty", actual.Message)
+	assert.Equal(t, "[code=400][Invalid model.Property entity. Property 'name' cannot be empty]", actual.Error())
 }
 
 func TestInvalidEntityCustom(t *testing.T) {
 	err := NewInvalidEntityCustom(model.Property{}, "test message")
 	actual := err.(*Error)
 	assert.Equal(t, 400, actual.Code)
-	assert.Equal(t, "Invalid properties for model.Property entity. test message", actual.Message)
-	assert.Equal(t, "[code=400][Invalid properties for model.Property entity. test message]", actual.Error())
+	assert.Equal(t, "Invalid model.Property entity. test message", actual.Message)
+	assert.Equal(t, "[code=400][Invalid model.Property entity. test message]", actual.Error())
 }
