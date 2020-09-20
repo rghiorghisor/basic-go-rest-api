@@ -107,7 +107,3 @@ storage:
     # The database name.
     # No default value is provided.
     name: "testdb"
-
-    # The properties collection name.
-    # No default value is provided.
-    properties-collection: "properties_collection"

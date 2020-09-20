@@ -32,8 +32,8 @@ func (f *mongoFactory) init(storage *Storage, config *config.StorageConfiguratio
 	db := f.connect(mongoConfig)
 
 	// Setup repositories.
-	storage.PropertyRepository = property_mongo.New(db, mongoConfig.PropertiesCollectionName)
-	storage.PropertySetRepository = propertyset_mongo.New(db, "")
+	storage.PropertyRepository = property_mongo.New(db)
+	storage.PropertySetRepository = propertyset_mongo.New(db)
 
 	// Add here any new repository...
 

@@ -18,7 +18,6 @@ func TestLoad(t *testing.T) {
 
 	assert.Equal(t, "mongodb://localhost:27017", appConfiguration.Storage.DbConfiguration.URI)
 	assert.Equal(t, "testdb", appConfiguration.Storage.DbConfiguration.Name)
-	assert.Equal(t, "properties_collection", appConfiguration.Storage.DbConfiguration.PropertiesCollectionName)
 }
 
 func TestLoadEnv(t *testing.T) {
@@ -36,11 +35,10 @@ func TestLoadEnv(t *testing.T) {
 	assert.Equal(t, 11, appConfiguration.Server.HTTPServer.WriteTimeout)
 
 	assert.Equal(t, "mongodb://localhost:27017", appConfiguration.Storage.DbConfiguration.URI)
-	assert.Equal(t, "properties_collection", appConfiguration.Storage.DbConfiguration.PropertiesCollectionName)
 	assert.Equal(t, "{loaded:true "+
 		"loadedFromDir:../tests/config "+
 		"loadedFromFile:test_config_env "+
-		"foundInEnv:[$SERVER_PORT $SERVER_READ_TIMEOUT $SERVER_WRITE_TIMEOUT $MONGO_DB_URI $MONGO_DB_PROPERTIES_COLLECTION] "+
+		"foundInEnv:[$SERVER_PORT $SERVER_READ_TIMEOUT $SERVER_WRITE_TIMEOUT $MONGO_DB_URI] "+
 		"notFoundInEnv:[$MONGO_DB_NAME]}", appConfiguration.Stats())
 }
 

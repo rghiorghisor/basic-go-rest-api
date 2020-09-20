@@ -106,11 +106,8 @@ The application configuration is achieved by the `./config/config.yml` file load
 | `server.http.write-timeout` | The server write timeout (in seconds). Default value is `10`.|
 | `storage.type` | The storage type that must be used. Accepted values are (case insensitive): `local`, `mongo`. Default value is `local`. |
 | `storage.local.name` | The location where the local storage must be created and used from. Default value is `local-storage/boltdb`. |
-| `storage.mongo.name` | The database name. *No default value is provided*. |
-| `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
 | `storage.mongo.uri` | The mongoDB URI. *No default value is provided*. |
 | `storage.mongo.name` | The database name. *No default value is provided*. |
-| `storage.mongo.properties-collection` | The properties collection name *No default value is provided*. |
 
 **Please see `config/config.default.yml` for a full sample and depiction of configuration settings.**
 
@@ -126,8 +123,7 @@ server:
 storage:
   mongo:
     uri: "mongodb://localhost:27017"
-    name: "testdb"
-    properties-collection: "properties_collection"
+    name: "testdb"    
 ```
 ### ENV variables
 The configuration loading does not use the Viper ENV variables handling but a new approach. Instead of using the name of the property to determine the ENV variable key to load, the property value is used.

@@ -9,5 +9,4 @@ server:
 storage:
   mongo:
     uri: "$MONGO_DB_URI"
-    name: "$MONGO_DB_NAME"
-    properties-collection: "$MONGO_DB_PROPERTIES_COLLECTION"
+    name: "$MONGO_DB_NAME"    

@@ -106,9 +106,8 @@ type BoltDbConfiguration struct {
 
 // MongoDbConfiguration hols settings referring to MongoDb as storage option.
 type MongoDbConfiguration struct {
-	URI                      string `yaml:"uri"`
-	Name                     string `yaml:"name"`
-	PropertiesCollectionName string `yaml:"properties-collection"`
+	URI  string `yaml:"uri"`
+	Name string `yaml:"name"`
 }
 
 type stats struct {

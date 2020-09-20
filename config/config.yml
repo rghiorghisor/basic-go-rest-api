@@ -16,5 +16,4 @@ storage:
 
   mongo:
     uri: "mongodb://localhost:27017"
-    name: "testdb"
-    properties-collection: "properties_collection"
+    name: "testdb"    

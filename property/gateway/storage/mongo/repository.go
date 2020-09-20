@@ -12,6 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const propertiesCollectionName = "properties_collection"
+
 type propertyDto struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Name        string             `bson:"name"`
@@ -26,9 +28,9 @@ type PropertyRepository struct {
 }
 
 // New retrieves a new repository object ready to be used.
-func New(db *mongo.Database, collectionName string) storage.Repository {
+func New(db *mongo.Database) storage.Repository {
 	return &PropertyRepository{
-		dbCollection: db.Collection(collectionName),
+		dbCollection: db.Collection(propertiesCollectionName),
 	}
 }
 

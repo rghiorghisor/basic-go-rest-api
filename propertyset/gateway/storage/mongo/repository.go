@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const setCollection = "set_collection"
+
 type propertySetDto struct {
 	Name   string   `bson:"_id"`
 	Values []string `bson:"values"`
@@ -25,9 +27,9 @@ type PropertySetRepository struct {
 }
 
 // New retrieves a new repository object ready to be used.
-func New(db *mongo.Database, collectionName string) storage.Repository {
+func New(db *mongo.Database) storage.Repository {
 	return &PropertySetRepository{
-		dbCollection: db.Collection("set_collection"),
+		dbCollection: db.Collection(setCollection),
 	}
 }
 
