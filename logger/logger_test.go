@@ -48,7 +48,7 @@ func TestInfof(t *testing.T) {
 	assert.Equal(t, strings.Contains(actual, "msg=\"test message no 1\""), true)
 }
 
-func TestInfo1(t *testing.T) {
+Info1(t *testing.T) {
 	definition := &Definition{
 		level:       logrus.DebugLevel,
 		formatter:   &logrus.TextFormatter{},
@@ -65,6 +65,7 @@ func TestInfo1(t *testing.T) {
 		lgr.Info("test message")
 	})
 
+	actual = "\n" + actual
 	assert.Equal(t, actual, buf.String())
 }
 
