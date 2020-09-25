@@ -10,6 +10,7 @@ func parse(ctx *gin.Context) property.Query {
 
 	q.ID = ctx.Param("id")
 	q.Set = ctx.Query("set")
+	q.Fields = property.NewFields(ctx.QueryArray("fields"))
 
 	return q
 }

@@ -38,3 +38,9 @@ func TestCreateParentFolderNoRights(t *testing.T) {
 		os.Remove(pName)
 	}()
 }
+
+func TestArrayToSetString(t *testing.T) {
+	assert.Equal(t, map[string]struct{}{}, ArrayToSetString())
+	assert.Equal(t, map[string]struct{}{"a": struct{}{}, "b": struct{}{}}, ArrayToSetString("A ", "  b  "))
+	assert.Equal(t, map[string]struct{}{"a": struct{}{}, "b": struct{}{}, "c": struct{}{}}, ArrayToSetString("A ", "  b  ", "C"))
+}

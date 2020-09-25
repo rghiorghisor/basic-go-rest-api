@@ -24,14 +24,19 @@ func newFormatters() formatters {
 
 func (f formatters) process(ctx *gin.Context, code int, bs []*model.Property) {
 	acceptHeader := ctx.Request.Header.Get("Accept")
-
+	found := false
 	for _, f := range f.values {
 		if !f.supports(acceptHeader) {
 			continue
 		}
 
 		f.process(ctx, code, bs)
+		found = true
 		break
+	}
+
+	if !found {
+		f.values[0].process(ctx, code, bs)
 	}
 }
 

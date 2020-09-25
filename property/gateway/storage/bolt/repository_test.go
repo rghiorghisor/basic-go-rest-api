@@ -36,21 +36,43 @@ func TestReadAll(t *testing.T) {
 	repo := setup()
 	defer tearDown(repo)
 
-	prop1 := &model.Property{
-		Name:        "test.name.1",
-		Description: "test.description.1",
-		Value:       "test.value.1",
-	}
-	prop2 := &model.Property{
-		Name:        "test.name.2",
-		Description: "test.description.2",
-		Value:       "test.value.2",
-	}
+	prop1 := &model.Property{Name: "test.name.1", Description: "test.description.1", Value: "test.value.1"}
+	prop2 := &model.Property{Name: "test.name.2", Description: "test.description.2", Value: "test.value.2"}
 
 	repo.Create(context.Background(), prop1)
 	repo.Create(context.Background(), prop2)
 
 	readProps, _ := repo.ReadAll(context.Background())
+
+	if readProps[0].ID == prop2.ID {
+		tmp := prop1
+		prop1 = prop2
+		prop2 = tmp
+	}
+
+	assert.Equal(t, true, (readProps[0].ID != ""))
+	assert.Equal(t, prop1.Name, readProps[0].Name)
+	assert.Equal(t, prop1.Description, readProps[0].Description)
+	assert.Equal(t, prop1.Value, readProps[0].Value)
+	assert.Equal(t, true, (readProps[1].ID != ""))
+	assert.Equal(t, prop2.Name, readProps[1].Name)
+	assert.Equal(t, prop2.Description, readProps[1].Description)
+	assert.Equal(t, prop2.Value, readProps[1].Value)
+}
+
+func TestReadAllFiltered(t *testing.T) {
+	repo := setup()
+	defer tearDown(repo)
+
+	prop1 := &model.Property{Name: "test.name.1", Description: "test.description.1", Value: "test.value.1"}
+	prop2 := &model.Property{Name: "test.name.2", Description: "test.description.2", Value: "test.value.2"}
+	prop3 := &model.Property{Name: "test.name.3", Description: "test.description.3", Value: "test.value.3"}
+
+	repo.Create(context.Background(), prop1)
+	repo.Create(context.Background(), prop2)
+	repo.Create(context.Background(), prop3)
+
+	readProps, _ := repo.ReadAllFiltered(context.Background(), []string{prop1.Name, prop2.Name})
 
 	if readProps[0].ID == prop2.ID {
 		tmp := prop1

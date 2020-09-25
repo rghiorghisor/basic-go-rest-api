@@ -22,15 +22,8 @@ import (
 func TestCreate(t *testing.T) {
 	router, service := setup()
 
-	dto := &createDto{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
-
-	prop := &model.Property{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	dto := &createDto{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
+	prop := &model.Property{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Create", prop).Return(nil).Run(func(args mock.Arguments) {
 		arg := args.Get(0).(*model.Property)
@@ -51,15 +44,8 @@ func TestCreate(t *testing.T) {
 func TestCreateConflict(t *testing.T) {
 	router, service := setup()
 
-	dto := &createDto{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
-
-	prop := &model.Property{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	dto := &createDto{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
+	prop := &model.Property{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Create", prop).Return(apperrors.NewConflict(reflect.TypeOf(prop), "name", prop.Name))
 
@@ -76,10 +62,7 @@ func TestCreateConflict(t *testing.T) {
 func TestCreateSyntacticInvalidRequestJSON(t *testing.T) {
 	router, service := setup()
 
-	prop := &model.Property{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	prop := &model.Property{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Create", prop).Return(nil)
 
@@ -95,15 +78,8 @@ func TestCreateSyntacticInvalidRequestJSON(t *testing.T) {
 func TestCreateUnexpected(t *testing.T) {
 	router, service := setup()
 
-	dto := &createDto{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
-
-	prop := &model.Property{
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	dto := &createDto{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
+	prop := &model.Property{Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Create", prop).Return(errors.New("unexpected"))
 
@@ -165,20 +141,39 @@ func TestReadAllProperties(t *testing.T) {
 		"name.test2 = Value test2\n", w.Body.String())
 }
 
+func TestReadAllDefaultFormat(t *testing.T) {
+	router, service := setup()
+
+	// Mock service return.
+	properties := make([]*model.Property, 3)
+	for i := 0; i < 3; i++ {
+		is := strconv.Itoa(i)
+		properties[i] = &model.Property{ID: "Id" + is, Name: "name.test" + is, Description: "Description test" + is, Value: "Value test" + is}
+	}
+
+	service.On("ReadAll", property.EmptyQuery).Return(properties, nil)
+
+	// Perform action.
+	headers := map[string]string{
+		"Accept": "text/html",
+	}
+	w := performWithHeaders("GET", "/api/property", nil, router, headers)
+
+	// Test result.
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, "application/json; charset=utf-8", w.Header()["Content-Type"][0])
+}
+
 func TestReadAllUnexpected(t *testing.T) {
 	router, service := setup()
 
 	// Mock service return.
 	properties := make([]*model.Property, 3)
 	for i := 0; i < 3; i++ {
-		properties[i] = &model.Property{
-			ID:          "Id",
-			Name:        "Name test",
-			Description: "Description test",
-			Value:       "Value test"}
+		properties[i] = &model.Property{ID: "Id", Name: "Name", Description: "Description", Value: "Value"}
 	}
-
-	service.On("ReadAll").Return(properties, errors.New("unexpected"))
+	query := property.Query{}
+	service.On("ReadAll", query).Return(properties, errors.New("unexpected"))
 
 	// Perform action.
 	w := perform("GET", "/api/property", nil, router)
@@ -191,12 +186,7 @@ func TestRead(t *testing.T) {
 	router, service := setup()
 
 	// Mock service return.
-	property := &model.Property{
-		ID:          "TestId",
-		Name:        "Name test",
-		Description: "Description test",
-		Value:       "Value test",
-	}
+	property := &model.Property{ID: "TestId", Name: "Name test", Description: "Description test", Value: "Value test"}
 
 	service.On("FindByID", "TestId").Return(property, nil)
 
@@ -205,6 +195,23 @@ func TestRead(t *testing.T) {
 
 	// Test result
 	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"id":"TestId","name":"Name test","description":"Description test","value":"Value test"}`, w.Body.String())
+}
+
+func TestReadFields(t *testing.T) {
+	router, service := setup()
+
+	// Mock service return.
+	property := &model.Property{ID: "TestId", Name: "Name test", Description: "Description test", Value: "Value test"}
+
+	service.On("FindByID", "TestId").Return(property, nil)
+
+	// Perform action.
+	w := perform("GET", "/api/property/TestId?fields=name&fields=value", nil, router)
+
+	// Test result
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"name":"Name test","value":"Value test"}`, w.Body.String())
 }
 
 func TestReadNotFound(t *testing.T) {
@@ -233,20 +240,27 @@ func TestReadUnexpected(t *testing.T) {
 	assert.Equal(t, 500, w.Code)
 }
 
+func TestReadBasic(t *testing.T) {
+	router, service := setup()
+
+	// Mock service return.
+	property := &model.Property{ID: "TestId", Name: "Name test", Description: "Description test", Value: "Value test"}
+
+	service.On("FindByID", "TestId").Return(property, nil)
+
+	// Perform action.
+	w := perform("GET", "/api/property/TestId/basic", nil, router)
+
+	// Test result
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, `{"name":"Name test","value":"Value test"}`, w.Body.String())
+}
+
 func TestUpdate(t *testing.T) {
 	router, service := setup()
 
-	dto := &updateDto{
-		ID:          "testid",
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
-
-	prop := &model.Property{
-		ID:          "testid",
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	dto := &updateDto{ID: "testid", Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
+	prop := &model.Property{ID: "testid", Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Update", prop).Return(nil)
 
@@ -283,17 +297,8 @@ func TestUpdateSyntacticInvalidRequestJSON(t *testing.T) {
 func TestUpdateUnexpected(t *testing.T) {
 	router, service := setup()
 
-	dto := &updateDto{
-		ID:          "testid",
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
-
-	prop := &model.Property{
-		ID:          "testid",
-		Name:        "TestCreateDto",
-		Description: "Test Description Dto",
-		Value:       "/uri/go/rest/api"}
+	dto := &updateDto{ID: "testid", Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
+	prop := &model.Property{ID: "testid", Name: "TestCreateDto", Description: "Test Description Dto", Value: "/uri/go/rest/api"}
 
 	service.On("Update", prop).Return(errors.New("unexpected"))
 

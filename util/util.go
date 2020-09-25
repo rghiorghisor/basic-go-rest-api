@@ -3,6 +3,7 @@ package util
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // CreateParentFolder creates the parent folder for the provided file name. The
@@ -17,4 +18,16 @@ func CreateParentFolder(fileName string) error {
 	}
 
 	return nil
+}
+
+// ArrayToSetString converts the given string values to a set like struct.
+func ArrayToSetString(values ...string) map[string]struct{} {
+	set := make(map[string]struct{}, len(values))
+	for _, s := range values {
+		s = strings.TrimSpace(s)
+		s = strings.ToLower(s)
+		set[s] = struct{}{}
+	}
+
+	return set
 }
