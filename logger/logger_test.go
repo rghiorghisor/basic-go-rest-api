@@ -2,6 +2,8 @@ package logger
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -12,53 +14,30 @@ import (
 )
 
 func TestInfo(t *testing.T) {
-	definition := &Definition{
-		level:     logrus.InfoLevel,
-		formatter: &logrus.TextFormatter{},
-		prefix:    "main",
-	}
-
-	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
+	buf, lgr := simpleSetup(logrus.InfoLevel)
 
 	lgr.Info("test message")
 
 	actual := buf.String()
 
-	assert.Equal(t, strings.Contains(actual, "level=info"), true)
-	assert.Equal(t, strings.Contains(actual, "prefix=main"), true)
-	assert.Equal(t, strings.Contains(actual, "msg=\"test message\""), true)
+	assert.Equal(t, true, strings.Contains(actual, "level=info"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message\""))
 }
 
 func TestInfof(t *testing.T) {
-	definition := &Definition{
-		level:     logrus.DebugLevel,
-		formatter: &logrus.TextFormatter{},
-		prefix:    "main",
-	}
-
-	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
+	buf, lgr := simpleSetup(logrus.InfoLevel)
 
 	lgr.Infof("test message no %d", 1)
 
 	actual := buf.String()
-	assert.Equal(t, strings.Contains(actual, "level=info"), true)
-	assert.Equal(t, strings.Contains(actual, "prefix=main"), true)
-	assert.Equal(t, strings.Contains(actual, "msg=\"test message no 1\""), true)
+	assert.Equal(t, true, strings.Contains(actual, "level=info"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message no 1\""))
 }
 
 func Info1(t *testing.T) {
-	definition := &Definition{
-		level:       logrus.DebugLevel,
-		formatter:   &logrus.TextFormatter{},
-		withConsole: true,
-		prefix:      "main",
-	}
-
-	buf := new(bytes.Buffer)
-	lgr := NewLogger(definition, buf)
-
+	buf, lgr := simpleSetup(logrus.DebugLevel)
 	lgr.Info("test message")
 
 	actual := captureOutput(lgr, func() {
@@ -91,6 +70,67 @@ func TestInfoFile(t *testing.T) {
 		os.Remove(testFileLocation)
 		os.Remove(testDirLocation)
 	}()
+}
+
+func TestWarn(t *testing.T) {
+	buf, lgr := simpleSetup(logrus.InfoLevel)
+
+	lgr.Warn("test message")
+
+	actual := buf.String()
+	assert.Equal(t, true, strings.Contains(actual, "level=warn"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message\""))
+}
+
+func TestDebugf(t *testing.T) {
+	buf, lgr := simpleSetup(logrus.DebugLevel)
+
+	lgr.Debugf("test message no %d", 1)
+
+	actual := buf.String()
+	assert.Equal(t, true, strings.Contains(actual, "level=debug"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message no 1\""))
+}
+
+func TestErrore(t *testing.T) {
+	buf, lgr := simpleSetup(logrus.DebugLevel)
+
+	lgr.Errore("test message")
+
+	actual := buf.String()
+	assert.Equal(t, true, strings.Contains(actual, "level=error"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message\""))
+}
+
+func TestError(t *testing.T) {
+	buf, lgr := simpleSetup(logrus.DebugLevel)
+
+	lgr.Error("test message", errors.New("unexpected"))
+
+	actual := buf.String()
+
+	fmt.Println(actual)
+
+	assert.Equal(t, true, strings.Contains(actual, "level=error"))
+	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))
+	assert.Equal(t, true, strings.Contains(actual, "msg=\"test message\""))
+	assert.Equal(t, true, strings.Contains(actual, "error=unexpected"))
+}
+
+func simpleSetup(level logrus.Level) (*bytes.Buffer, *Logger) {
+	definition := &Definition{
+		level:     level,
+		formatter: &logrus.TextFormatter{},
+		prefix:    "main",
+	}
+
+	buf := new(bytes.Buffer)
+	lgr := NewLogger(definition, buf)
+
+	return buf, lgr
 }
 
 func captureOutput(lgr *Logger, f func()) string {
