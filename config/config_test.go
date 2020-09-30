@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/go-playground/assert/v2"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLoad(t *testing.T) {
@@ -18,6 +18,13 @@ func TestLoad(t *testing.T) {
 
 	assert.Equal(t, "mongodb://localhost:27017", appConfiguration.Storage.DbConfiguration.URI)
 	assert.Equal(t, "testdb", appConfiguration.Storage.DbConfiguration.Name)
+}
+
+func TestLoadNotFound(t *testing.T) {
+	_, err := setupAndLoad("test_config_simple_not_found")
+
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), `Config File "test_config_simple_not_found" Not Found in `)
 }
 
 func TestLoadEnv(t *testing.T) {
@@ -120,6 +127,14 @@ func TestEnvironmentFlagInvalid(t *testing.T) {
 	flag.Set("env", "aaa")
 	_, err := setupAndLoad("test_config_env_dev")
 	assert.Equal(t, errors.New("Invalid values for flag env ('aaa'). env description: 'Environment {prod|production|dev|development}'"), err)
+}
+
+func TestConfigurationFlag(t *testing.T) {
+	flag.Set("env", "dev")
+	flag.Set("c", "../tests/config/test_config_env_prod")
+	appConfiguration, _ := setupAndLoad("test_config_env_dev")
+
+	assert.Equal(t, 80, appConfiguration.Server.HTTPServer.Port)
 }
 
 func setupAndLoad(name string) (*AppConfiguration, error) {

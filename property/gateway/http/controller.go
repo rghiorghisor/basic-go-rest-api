@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
 
@@ -199,7 +198,6 @@ func toPropertyFiltered(b *model.Property, query property.Query) interface{} {
 		jsonKey := field.Tag.Get("json")
 
 		if query.Fields.Contains(jsonKey) {
-			fmt.Println(jsonKey)
 			out[jsonKey] = rv.Field(i).Interface()
 		}
 	}

@@ -1,1 +1,5 @@
 environment: prod
+
+server:  
+  http:
+    port: 80

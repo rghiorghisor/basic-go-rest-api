@@ -3,7 +3,6 @@ package logger
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -111,8 +110,6 @@ func TestError(t *testing.T) {
 	lgr.Error("test message", errors.New("unexpected"))
 
 	actual := buf.String()
-
-	fmt.Println(actual)
 
 	assert.Equal(t, true, strings.Contains(actual, "level=error"))
 	assert.Equal(t, true, strings.Contains(actual, "prefix=main"))

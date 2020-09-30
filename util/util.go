@@ -20,6 +20,12 @@ func CreateParentFolder(fileName string) error {
 	return nil
 }
 
+// SplitFilepath tries to split the provided path into the filename and directory.
+// Note that no validation is done by this method.
+func SplitFilepath(fileAndPath string) (string, string) {
+	return filepath.Split(fileAndPath)
+}
+
 // ArrayToSetString converts the given string values to a set like struct.
 func ArrayToSetString(values ...string) map[string]struct{} {
 	set := make(map[string]struct{}, len(values))

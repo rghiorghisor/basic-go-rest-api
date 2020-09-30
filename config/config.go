@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/rghiorghisor/basic-go-rest-api/util"
 	"github.com/spf13/viper"
 )
 
@@ -147,7 +148,9 @@ func (appConfiguration *AppConfiguration) Load() error {
 
 	viper.SetConfigType(configType)
 
-	viper.ReadInConfig()
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
 
 	envLoader := newEnvValueLoader()
 	err := viper.Unmarshal(&appConfiguration, func(config *mapstructure.DecoderConfig) {
@@ -181,6 +184,7 @@ func (appConfiguration *AppConfiguration) Load() error {
 func createFlags() []*appFlag {
 	return []*appFlag{
 		{command: "env", defaultValue: "dev", description: "Environment {prod|production|dev|development}", validator: validateEnvFlag},
+		{command: "c", defaultValue: "config/config.yml", description: "Path and name of the configuration file", validator: validateConfigFlag},
 	}
 }
 
@@ -251,6 +255,15 @@ func validateEnvFlag(flg *appFlag, appConfiguration *AppConfiguration, envString
 	}
 
 	appConfiguration.Settings.environment = envString
+	return nil
+}
+
+func validateConfigFlag(flg *appFlag, appConfiguration *AppConfiguration, configFile string) error {
+	dir, file := util.SplitFilepath(configFile)
+
+	appConfiguration.Settings.configPath = dir
+	appConfiguration.Settings.configName = file
+
 	return nil
 }
 

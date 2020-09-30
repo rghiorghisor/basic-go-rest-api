@@ -39,6 +39,12 @@ func TestCreateParentFolderNoRights(t *testing.T) {
 	}()
 }
 
+func TestSplitFilepath(t *testing.T) {
+	dir, file := SplitFilepath("./test.file")
+	assert.Equal(t, "./", dir)
+	assert.Equal(t, "test.file", file)
+}
+
 func TestArrayToSetString(t *testing.T) {
 	assert.Equal(t, map[string]struct{}{}, ArrayToSetString())
 	assert.Equal(t, map[string]struct{}{"a": struct{}{}, "b": struct{}{}}, ArrayToSetString("A ", "  b  "))
