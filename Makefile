@@ -12,7 +12,8 @@ test:
 		tail -n +2 cover.out >> cover-all.out;)
 
 test-cover: test
-	go tool cover -html=cover-all.out
+	#go tool cover -html=cover-all.out
+	go tool cover -func cover-all.out
 
 lint:
 	@$(GOLINT) ./...
