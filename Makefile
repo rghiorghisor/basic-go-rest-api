@@ -11,8 +11,7 @@ test:
 		go test -p=1 -cover -covermode=count -coverprofile=cover.out ${pkg}; \
 		tail -n +2 cover.out >> cover-all.out;)
 
-test-cover: test
-	#go tool cover -html=cover-all.out
+test-cover: test	
 	go tool cover -func cover-all.out
 
 lint:
