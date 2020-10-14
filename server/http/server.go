@@ -44,7 +44,7 @@ func (server *Server) Setup(config *config.AppConfiguration, controllers *server
 		JSONAppErrorHandler(),
 	)
 
-	setupEndpoints(controllers, router)
+	setupEndpoints(controllers, router, config.Application)
 	setupServer(server, router, config.Server.HTTPServer)
 }
 
@@ -87,12 +87,12 @@ func (server *Server) Run() error {
 	return nil
 }
 
-func setupEndpoints(controllers *server.Controllers, router *gin.Engine) {
+func setupEndpoints(controllers *server.Controllers, router *gin.Engine, appSettings *config.ApplicationSettings) {
 	base := router.Group("")
 	healthcheck := NewHealthcheckController()
 	healthcheck.Register(base)
 
-	api := router.Group("/api")
+	api := router.Group(appSettings.ContextPath)
 	for _, c := range controllers.HTTP {
 		c.Register(api)
 	}

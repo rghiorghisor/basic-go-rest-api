@@ -80,7 +80,7 @@ func testConnection(t *testing.T, address string) {
 }
 
 func testResponse(t *testing.T, address string) {
-	resp, err := http.Get("http://localhost" + address + "/api/property")
+	resp, err := http.Get("http://localhost" + address + "/api/v1/property")
 	if err != nil {
 		assert.Fail(t, "Cannot connect", err)
 	}

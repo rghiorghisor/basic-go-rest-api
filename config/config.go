@@ -44,6 +44,7 @@ type appFlag struct {
 type AppConfiguration struct {
 	Environment *Environment `yaml:"none"`
 	Settings    *ConfigurationSettings
+	Application *ApplicationSettings  `yaml:"application"`
 	Loggers     *LoggersConfiguration `yaml:"logger"`
 	Server      *ServerConfiguration  `yaml:"server"`
 	Storage     *StorageConfiguration `yaml:"storage"`
@@ -63,6 +64,13 @@ type ConfigurationSettings struct {
 	configPath  string
 	configName  string
 	environment string
+}
+
+// ApplicationSettings contains information regarding the actual application settings.
+type ApplicationSettings struct {
+	Name        string `yaml:"name"`
+	Version     int    `yaml:"version"`
+	ContextPath string `yaml:"context-path"`
 }
 
 // LoggersConfiguration contains the settings of all available loggers.
@@ -290,15 +298,15 @@ func newEnvValueLoader() *EnvValueLoader {
 	return &EnvValueLoader{expression: regexp.MustCompile(`^\$.*`)}
 }
 
-func (envValueLoader *EnvValueLoader) load(appConfiguration *AppConfiguration, f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
-	if f == reflect.TypeOf(envValueLoader.reference) {
+func (evl *EnvValueLoader) load(appConfiguration *AppConfiguration, f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
+	if f == reflect.TypeOf(evl.reference) {
 		// If it is not a value, but a struct ignore further processing.
 		return data, nil
 	}
 
 	valueString := fmt.Sprintf("%v", data)
 
-	if !envValueLoader.expression.MatchString(valueString) {
+	if !evl.expression.MatchString(valueString) {
 		// If the value is not a ENV variable ignore further processing.
 		return data, nil
 	}

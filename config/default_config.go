@@ -4,10 +4,11 @@ package config
 // configuration values.
 func NewDefault() *AppConfiguration {
 	return &AppConfiguration{
-		Settings: newDefaultSettings(),
-		Loggers:  newDefaultLoggersConfiguration(),
-		Storage:  newDefaultStorageConfiguration(),
-		Server:   newDefaultServerConfiguration(),
+		Settings:    newDefaultSettings(),
+		Application: newDefaultApplicationSettings(),
+		Loggers:     newDefaultLoggersConfiguration(),
+		Storage:     newDefaultStorageConfiguration(),
+		Server:      newDefaultServerConfiguration(),
 	}
 }
 
@@ -15,6 +16,14 @@ func newDefaultSettings() *ConfigurationSettings {
 	return &ConfigurationSettings{
 		configPath: "./config",
 		configName: "config",
+	}
+}
+
+func newDefaultApplicationSettings() *ApplicationSettings {
+	return &ApplicationSettings{
+		Name:        "Basic Go REST API",
+		Version:     1,
+		ContextPath: "/api/v1",
 	}
 }
 
